@@ -7,10 +7,10 @@ Just le glitch
 Sicherstellen, dass Node.js und Ruby 2.x installiert sind.
 
 ###Ruby
-Mit ```ruby -v``` in der Konsole prüfen ob Ruby installiert ist. Der Befehl sollte ungefähr folgende ausgabe zurückgeben ```ruby 2.0.0p247 (2013-06-27) [x64-mingw32]```. Sollte dies nicht der Fall sein, dann kann Node.js unter http://rubyinstaller.org/ herunterladen werden.
+Mit ```ruby -v``` in der Konsole prüfen ob Ruby installiert ist. Der Befehl sollte ungefähr folgende Ausgabe zurückgeben ```ruby 2.0.0p247 (2013-06-27) [x64-mingw32]```. Sollte dies nicht der Fall sein, dann kann Node.js unter http://rubyinstaller.org/ heruntergeladen werden.
 
 ### Node.js
-Mit ```npm -v``` in der Konsole prüfen ob Node.js installiert ist. Der Befehl sollte ungefähr folgende ausgabe zurückgeben ```1.3.11```. Sollte dies nicht der Fall sein, dann kann Node.js unter http://nodejs.org/ herunterladen werden.
+Mit ```npm -v``` in der Konsole prüfen ob Node.js installiert ist. Der Befehl sollte ungefähr folgende Ausgabe zurückgeben ```1.3.11```. Sollte dies nicht der Fall sein, dann kann Node.js unter http://nodejs.org/ herunterladen werden.
 
 ###!Achtung
 Wenn ihr erst jetzt Ruby und / oder Node.js installiert habt müsst ihr eure Konsole schließen und nochmals starten. Dies ist besonders unter Windows wichtig.
@@ -24,10 +24,10 @@ Das Konsolenprogramm zu Grunt lässt sich schnell und unkompliziert via ```npm i
 
 ### SASS
 
-Neben Grunt wird auch SASS in diesem Projekt genutzt. Dies ist ganz einfach über folgendem Befehl zu installieren ```gem install sass```. Auch hier muss man sich nicht im Projektverzeichnissbefinden.
+Neben Grunt wird auch SASS in diesem Projekt genutzt. Dies ist ganz einfach über folgendem Befehl zu installieren ```gem install sass```. Auch hier muss man sich nicht im Projektverzeichniss befinden.
 
 ### Alle Abhängigkeiten automatisch installieren
-Im Projektverzeichnis wird ```npm install``` ausgeführt um alle in der package.json hinterlegten Abhängikeiten zu installieren.
+Im Projektverzeichnis wird ```npm install``` ausgeführt um alle in der package.json hinterlegten Abhängkeiten zu installieren.
 
 ##Ordnerstruktur
 
@@ -35,4 +35,4 @@ Im Projektverzeichnis wird ```npm install``` ausgeführt um alle in der package.
 Alle Sourcen sind in entsprechenden Ordnerstrukturen unterteilt. (siehe Folder ```source/```)
 
 ###Build
-Der Build entspricht der Ordnerstruktur von ```source/``` mit Außnahme der HTML-Dateien. Diese werden dierekt im Root ```build/``` abgelegt.
+Der Build entspricht der Ordnerstruktur von ```source/``` mit Außnahme der HTML-Dateien. Diese werden direkt im Root ```build/``` abgelegt.
