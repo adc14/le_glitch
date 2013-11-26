@@ -27,12 +27,12 @@ Das Konsolenprogramm zu Grunt lässt sich schnell und unkompliziert via ```npm i
 Neben Grunt wird auch SASS in diesem Projekt genutzt. Dies ist ganz einfach über folgendem Befehl zu installieren ```gem install sass```. Auch hier muss man sich nicht im Projektverzeichniss befinden.
 
 ### Alle Abhängigkeiten automatisch installieren
-Im Projektverzeichnis wird ```npm install``` ausgeführt um alle in der package.json hinterlegten Abhängkeiten zu installieren.
+Im Projektverzeichnis wird ```npm install``` ausgeführt um alle in der package.json hinterlegten Abhängigkeiten zu installieren.
 
 ##Ordnerstruktur
 
 ###Source
-Alle Sourcen sind in entsprechenden Ordnerstrukturen unterteilt. (siehe Folder ```source/```)
+Alle Sourcen sind in entsprechende Ordnerstrukturen unterteilt. (siehe Folder ```source/```)
 
 ###Build
 Der Build entspricht der Ordnerstruktur von ```source/``` mit Außnahme der HTML-Dateien. Diese werden direkt im Root ```build/``` abgelegt.
