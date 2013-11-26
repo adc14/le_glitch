@@ -1,0 +1,50 @@
+html {
+    font-family: sans-serif; /* 1 */
+    -ms-text-size-adjust: 100%; /* 2 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+body {
+	margin: 0;
+    background: $page-background-color;
+    font: 100%/1.5 $font;
+    -webkit-text-size-adjust: 100%;
+    color: $text-color;
+}
+
+article{
+	width: $half;
+	margin: 0 auto;
+}
+
+section{
+	width: $half;
+	margin: 0 auto;
+}
+
+img{
+	width: 100%;
+}
+
+// Correct `block` display not defined in IE 8/9.
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+// Correct `inline-block` display not defined in IE 8/9.
+audio,
+canvas,
+video {
+    display: inline-block;
+}

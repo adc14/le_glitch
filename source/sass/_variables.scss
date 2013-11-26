@@ -1,0 +1,46 @@
+$black: #000;
+$white: #fff;
+
+$dark-grey: #1a1a1a;
+$grey: #343838;
+$bright-grey: #E0E0E0;
+$blueish-grey: #272e33;
+
+$bright-blue: #9EE3FA;
+
+$page-background-color: $dark-grey;
+$text-color: $white;
+$link-color: $bright-blue;
+
+$font : "Roboto", "HelveticaNeue", "Helvetica", "Arial", sans-serif;
+$font-secondary : Georgia, Times, "Times New Roman", serif;
+
+$font-size-norm : 1em;
+$font-size-slightly-larger : 1.0625em;
+$font-size-slightly-smaller : 0.875em;
+$font-size-sm : 0.75em;
+$font-size-large : 1.4375em;
+
+$quarter: 25%;
+$half: 50%;
+$three-quarter: 75%;
+$full: 100%;
+
+$space : 1rem;
+$space-and-half : $space*1.5;
+$space-double : $space*2;
+$space-triple : $space*3;
+$space-quad : $space*4;
+$space-half : $space/2;
+$space-quarter : $space/4;
+
+$pad: 1rem;
+$pad-and-half : $pad*1.5;
+$pad-double : $pad*2;
+$pad-half : $pad/2;
+$pad-quarter :$pad/4;
+
+$bp-med: 768px;
+$bp-large: 1200px;
+
+

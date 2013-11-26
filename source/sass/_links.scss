@@ -1,0 +1,17 @@
+a {
+	background: transparent;
+    color: $link-color;
+    text-decoration: none;
+    outline: 0;
+    
+    &:hover, &:focus {
+        text-decoration: underline;
+    }
+    &:focus {
+    	outline: thin dotted;
+	}
+	:active,
+	:hover {
+	    outline: 0;
+	}
+}
