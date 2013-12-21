@@ -12,9 +12,15 @@ body {
     color: $text-color;
 }
 
-article{
-	width: $half;
-	margin: 0 auto;
+article {
+    box-sizing: border-box;
+	width: $full;
+	padding: 0 8%;
+    @include breakpoint(baby-bear) { 
+        width: $half; 
+        margin: 0 auto;
+        padding: 0;
+    }      
 }
 
 section{
@@ -22,7 +28,15 @@ section{
 }
 
 img{
-	max-width: 100%;
+	max-width: $full;
+}
+
+.logo {
+    width: $full;
+    @include breakpoint(baby-bear) { 
+        width: $half; 
+        margin: 0 8%;
+    }  
 }
 
 // Correct `block` display not defined in IE 8/9.
