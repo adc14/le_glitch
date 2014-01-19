@@ -65,7 +65,7 @@ if (document.addEventListener) {
 
 	$(document).ready(function($) {
 		
-		customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
+		// customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
 		
 	});
 })(jQuery);
