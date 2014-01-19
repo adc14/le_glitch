@@ -13,6 +13,8 @@ module.exports = function(grunt){
         FONTS_SOURCE = 'source/fonts/',
         FONTS_BUILD = 'build/fonts/',
         CONNECT_PORT = 9001;
+        PDF_SOURCE = 'source/pdf/',
+        PDF_BUILD = 'build/pdf/';
 
     "use strict";
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
@@ -184,6 +186,16 @@ module.exports = function(grunt){
                         expand: true
                     }
                 ]
+            },
+            pdf: {
+                files: [
+                    {
+                        cwd: PDF_SOURCE,
+                        src: '**',
+                        dest: PDF_BUILD,
+                        expand: true
+                    }
+                ]
             }
         },
 
@@ -224,7 +236,7 @@ module.exports = function(grunt){
     grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
     grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
-    grunt.registerTask('buildassets',  ['copy:img','copy:fonts']);
+    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf']);
 
 
 };
