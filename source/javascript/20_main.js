@@ -49,19 +49,23 @@ if (document.addEventListener) {
 //
 
 (function($){
-	// html2canvas($("#targetElement"), {
-	//     onrendered: function(canvas) {
-	//         // the element has been rendered into the HTMLCanvasElement
-	//         $("body").append(canvas);
-	//     }
-	// });
-	// $(".logo").glitch({
-	//     amount: 8,
-	//     effect: slide,
-	//     complete: function(canvas){
-	// 		console.log('lets do crazy stuff!');
 
+	var customImageGlitch = function(duration,$elem, $target){
+		$elem.glitch({
+		    amount: 3,
+		    background : undefined,
+		    complete: function(canvas){
+				$target.html(canvas);
+				setTimeout(function(){
+					customImageGlitch(duration, $elem, $target);
+				}, duration);
+			}
+		});
+	};
 
-	// 	}
-	// });
+	$(document).ready(function($) {
+		
+		customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
+		
+	});
 })(jQuery);

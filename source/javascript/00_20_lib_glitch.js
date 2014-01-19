@@ -47,6 +47,7 @@
 			// cache the width and height of the canvas locally
 			x, y, w = canvas.width, h = canvas.height,
 
+
 			// _len is an iterator limit, initially storing the number of slices
 			// to create
 			i, _len = amount || 6,
@@ -133,12 +134,11 @@
 
 		// copy the tweaked ImageData back into the context
 		tempCtx.putImageData(targetImageData, 0, 0);
-
 		// add scan lines
-		tempCtx.fillStyle = "rgb(0,0,0)";
-		for (i = 0; i < h; i += 2) {
-			tempCtx.fillRect (0, i, w, 1);
-		}
+		// tempCtx.fillStyle = "rgba(182,182,182,0.1)";
+		// for (i = 0; i < h; i += 2) {
+		// 	tempCtx.fillRect (0, i, w, 1);
+		// }
 
 		return tempCanvas;
 	};
