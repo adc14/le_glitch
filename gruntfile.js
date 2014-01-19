@@ -11,7 +11,8 @@ module.exports = function(grunt){
         IMG_SOURCE = 'source/img/',
         IMG_BUILD = 'build/img/',
         FONTS_SOURCE = 'source/fonts/',
-        FONTS_BUILD = 'build/fonts/';
+        FONTS_BUILD = 'build/fonts/',
+        CONNECT_PORT = 9001;
 
     "use strict";
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
@@ -19,6 +20,25 @@ module.exports = function(grunt){
     grunt.initConfig({
 
         pkg: grunt.file.readJSON('package.json'),
+
+        // Connect Server
+        connect: {
+            options: {
+                port: CONNECT_PORT,
+                livereload: 35729,
+                // Change this to '0.0.0.0' to access the server from outside
+                hostname: 'localhost'
+            },
+            livereload: {
+                options: {
+                    open: true,
+                    base: [
+                        'build'
+                    ]
+                }
+            }
+        },
+
         //cssbuild
         sass: {
             build: {
@@ -45,7 +65,7 @@ module.exports = function(grunt){
                 dest: CSS_DEPLOY
             }
         },
-        
+
         //jsbuild
         jshint: {
             lib_test: {
@@ -169,6 +189,16 @@ module.exports = function(grunt){
 
         //watchtasks
         watch: {
+            livereload: {
+                // Browser live reloading
+                // https://github.com/gruntjs/grunt-contrib-watch#live-reloading
+                options: {
+                    livereload: true
+                },
+                files: [
+                    'build/**'
+                ]
+            },
             html: {
                 files: [HTML_SOURCE],
                 tasks: ['buildhtml']
@@ -189,9 +219,10 @@ module.exports = function(grunt){
     });
 
     grunt.registerTask('default',   []);
+    grunt.registerTask('server',   ['build','connect:livereload','watch']);
     grunt.registerTask('build',   ['buildjs', 'buildhtml', 'buildcss', 'buildassets']);
     grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
-    grunt.registerTask('buildjs',  ['jshint', 'mocha', 'concat', 'uglify']);
+    grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
     grunt.registerTask('buildassets',  ['copy:img','copy:fonts']);
 

@@ -6,7 +6,8 @@ html {
 
 body {
 	margin: 0;
-    background: $page-background-color;
+    background: green;
+    // background: $page-background-color;
     font: 100%/1.5 $font;
     -webkit-text-size-adjust: 100%;
     color: $text-color;
@@ -16,11 +17,11 @@ article {
     box-sizing: border-box;
 	width: $full;
 	padding: 0 8%;
-    @include breakpoint(baby-bear) { 
-        width: $half; 
+    @include breakpoint(baby-bear) {
+        width: $half;
         margin: 0 auto;
         padding: 0;
-    }      
+    }
 }
 
 section{
@@ -33,10 +34,10 @@ img{
 
 .logo {
     width: $full;
-    @include breakpoint(baby-bear) { 
-        width: $half; 
+    @include breakpoint(baby-bear) {
+        width: $half;
         margin: 0 8%;
-    }  
+    }
 }
 
 // Correct `block` display not defined in IE 8/9.
