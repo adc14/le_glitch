@@ -11,7 +11,9 @@ module.exports = function(grunt){
         IMG_SOURCE = 'source/img/',
         IMG_BUILD = 'build/img/',
         FONTS_SOURCE = 'source/fonts/',
-        FONTS_BUILD = 'build/fonts/';
+        FONTS_BUILD = 'build/fonts/',
+        PDF_SOURCE = 'source/pdf/',
+        PDF_BUILD = 'build/pdf/';        
 
     "use strict";
     require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
@@ -164,7 +166,17 @@ module.exports = function(grunt){
                         expand: true
                     }
                 ]
-            }
+            },
+            pdf: {
+                files: [
+                    {
+                        cwd: PDF_SOURCE,
+                        src: '**',
+                        dest: PDF_BUILD,
+                        expand: true
+                    }
+                ]
+            }            
         },
 
         //watchtasks
@@ -193,7 +205,7 @@ module.exports = function(grunt){
     grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
     grunt.registerTask('buildjs',  ['jshint', 'mocha', 'concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
-    grunt.registerTask('buildassets',  ['copy:img','copy:fonts']);
+    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf']);
 
 
 };
