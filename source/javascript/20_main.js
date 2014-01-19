@@ -11,7 +11,9 @@
 
 	var easter_egg = new Konami();
 	console.log("konami code loaded");
-	easter_egg.code = function() { alert('Konami code!'); }
+	easter_egg.code = function() {
+		window.location.href = "crash.html";
+	}
 	easter_egg.load();
 
 })(window);
@@ -58,7 +60,7 @@ if (document.addEventListener) {
 	//     effect: slide,
 	//     complete: function(canvas){
 	// 		console.log('lets do crazy stuff!');
-	
+
 
 	// 	}
 	// });
