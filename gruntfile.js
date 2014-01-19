@@ -234,7 +234,8 @@ module.exports = function(grunt){
     grunt.registerTask('server',   ['build','connect:livereload','watch']);
     grunt.registerTask('build',   ['buildjs', 'buildhtml', 'buildcss', 'buildassets']);
     grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
-    grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
+    // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
+    grunt.registerTask('buildjs',  ['concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
     grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf']);
 

@@ -11,7 +11,9 @@
 
 	var easter_egg = new Konami();
 	console.log("konami code loaded");
-	easter_egg.code = function() { alert('Konami code!'); }
+	easter_egg.code = function() {
+		window.location.href = "crash.html";
+	}
 	easter_egg.load();
 
 })(window);
@@ -42,3 +44,24 @@ if (document.addEventListener) {
   document.addEventListener("DOMContentLoaded", randomDeadPixel, false);
 }
 
+//
+// Imageglitch
+//
+
+(function($){
+	// html2canvas($("#targetElement"), {
+	//     onrendered: function(canvas) {
+	//         // the element has been rendered into the HTMLCanvasElement
+	//         $("body").append(canvas);
+	//     }
+	// });
+	// $(".logo").glitch({
+	//     amount: 8,
+	//     effect: slide,
+	//     complete: function(canvas){
+	// 		console.log('lets do crazy stuff!');
+
+
+	// 	}
+	// });
+})(jQuery);
