@@ -14,6 +14,8 @@ module.exports = function(grunt){
         FONTS_BUILD = 'build/fonts/',
         CONNECT_PORT = 9001;
         PDF_SOURCE = 'source/pdf/',
+        SCENE_SOURCE = 'source/scene/',
+        SCENE_BUILD = 'build/scene/',
         PDF_BUILD = 'build/pdf/';
 
     "use strict";
@@ -196,6 +198,16 @@ module.exports = function(grunt){
                         expand: true
                     }
                 ]
+            },
+            scene: {
+                files: [
+                    {
+                        cwd: SCENE_SOURCE,
+                        src: '**',
+                        dest: SCENE_BUILD,
+                        expand: true
+                    }
+                ]
             }
         },
 
@@ -226,6 +238,10 @@ module.exports = function(grunt){
             htmlcss: {
                 files: ['source/sass/**/*.scss', HTML_SOURCE],
                 tasks: ['buildhtml', 'buildcss', 'buildassets']
+            },
+            scene: {
+                files: ['source/scene/**', HTML_SOURCE],
+                tasks: ['copy:scene']
             }
         }
     });
@@ -237,7 +253,7 @@ module.exports = function(grunt){
     // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildjs',  ['concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
-    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf']);
+    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf', 'copy:scene']);
 
 
 };

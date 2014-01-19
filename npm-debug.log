@@ -1,0 +1,81 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'gitx' ]
+2 info using npm@1.2.14
+3 info using node@v0.10.0
+4 verbose read json /Users/krevativ/Desktop/le_glitch/package.json
+5 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/css-condense/package.json
+6 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt/package.json
+7 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-concat/package.json
+8 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-connect/package.json
+9 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-copy/package.json
+10 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-cssmin/package.json
+11 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-jshint/package.json
+12 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-sass/package.json
+13 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-uglify/package.json
+14 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-contrib-watch/package.json
+15 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-cssc/package.json
+16 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-html-build/package.json
+17 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-htmlhint/package.json
+18 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/grunt-mocha/package.json
+19 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/js-beautify/package.json
+20 verbose read json /Users/krevativ/Desktop/le_glitch/node_modules/matchdep/package.json
+21 verbose from cache /Users/krevativ/Desktop/le_glitch/package.json
+22 verbose readDependencies using package.json deps
+23 verbose cache add [ 'gitx', null ]
+24 verbose cache add name=undefined spec="gitx" args=["gitx",null]
+25 verbose parsed url { protocol: null,
+25 verbose parsed url   slashes: null,
+25 verbose parsed url   auth: null,
+25 verbose parsed url   host: null,
+25 verbose parsed url   port: null,
+25 verbose parsed url   hostname: null,
+25 verbose parsed url   hash: null,
+25 verbose parsed url   search: null,
+25 verbose parsed url   query: null,
+25 verbose parsed url   pathname: 'gitx',
+25 verbose parsed url   path: 'gitx',
+25 verbose parsed url   href: 'gitx' }
+26 silly lockFile f8b1b8e8-gitx gitx
+27 verbose lock gitx /Users/krevativ/.npm/f8b1b8e8-gitx.lock
+28 silly lockFile f8b1b8e8-gitx gitx
+29 silly lockFile f8b1b8e8-gitx gitx
+30 verbose addNamed [ 'gitx', '' ]
+31 verbose addNamed [ null, '' ]
+32 silly lockFile ed220c52-gitx gitx@
+33 verbose lock gitx@ /Users/krevativ/.npm/ed220c52-gitx.lock
+34 silly addNameRange { name: 'gitx', range: '', hasData: false }
+35 verbose url raw gitx
+36 verbose url resolving [ 'https://registry.npmjs.org/', './gitx' ]
+37 verbose url resolved https://registry.npmjs.org/gitx
+38 info trying registry request attempt 1 at 23:55:32
+39 http GET https://registry.npmjs.org/gitx
+40 http 404 https://registry.npmjs.org/gitx
+41 silly registry.get cb [ 404,
+41 silly registry.get   { date: 'Sun, 19 Jan 2014 22:55:33 GMT',
+41 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R15B03)',
+41 silly registry.get     'content-type': 'application/json',
+41 silly registry.get     'cache-control': 'max-age=0',
+41 silly registry.get     'content-length': '52',
+41 silly registry.get     'accept-ranges': 'bytes',
+41 silly registry.get     via: '1.1 varnish',
+41 silly registry.get     age: '0',
+41 silly registry.get     'x-served-by': 'cache-fra1221-FRA',
+41 silly registry.get     'x-cache': 'MISS',
+41 silly registry.get     'x-cache-hits': '0',
+41 silly registry.get     'x-timer': 'S1390172133.377858877,VS0,VE137',
+41 silly registry.get     'keep-alive': 'timeout=10, max=50',
+41 silly registry.get     connection: 'Keep-Alive' } ]
+42 silly lockFile ed220c52-gitx gitx@
+43 silly lockFile ed220c52-gitx gitx@
+44 error 404 'gitx' is not in the npm registry.
+44 error 404 You should bug the author to publish it
+44 error 404
+44 error 404 Note that you can also install from a
+44 error 404 tarball, folder, or http url, or git url.
+45 error System Darwin 13.0.0
+46 error command "node" "/usr/local/bin/npm" "install" "gitx"
+47 error cwd /Users/krevativ/Desktop/le_glitch
+48 error node -v v0.10.0
+49 error npm -v 1.2.14
+50 error code E404
+51 verbose exit [ 1, true ]
