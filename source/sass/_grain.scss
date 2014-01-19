@@ -338,20 +338,20 @@ blink > * {
 	position: relative;
   z-index: 2;
 }
-blink:after {
+#threeBackground:after {
   -webkit-animation: grain 5s steps(10) infinite;
   -moz-animation: grain 5s steps(10) infinite;
   -ms-animation: grain 5s steps(10) infinite;
   animation: grain 5s steps(10) infinite;
   background: url(http://cl.ly/image/2m2R0A3m1b3x/noise.png);
-  content: "";
+  content: " ";
   display: block;
   height: 300%;
   left: -100%;
   position: absolute;
   top: -100%;
   width: 300%;
-  z-index: 1;
+  z-index: 2;
   opacity: 0.5;
 }
 blink b {
