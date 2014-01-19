@@ -9,6 +9,11 @@
 
 	w.doCrazyStuff = command;
 
+	var easter_egg = new Konami();
+	console.log("konami code loaded");
+	easter_egg.code = function() { alert('Konami code!'); }
+	easter_egg.load();
+
 })(window);
 
 function randomDeadPixel() {
@@ -36,3 +41,4 @@ function randomDeadPixel() {
 if (document.addEventListener) {
   document.addEventListener("DOMContentLoaded", randomDeadPixel, false);
 }
+
