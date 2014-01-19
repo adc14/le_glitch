@@ -11,7 +11,13 @@
 		camera = null,
 		renderer = null,
 		composer = null,
-		ratio = getPixelRatio();
+		ratio = getPixelRatio(),
+		effect = null,
+		glitchCounter = 0,
+		glitchStart = 0,
+		glitchRepeats = 10,
+		glitchRepeatCounter = 0,
+		rotObject = null;
 
 	function getPixelRatio() {
 		var canvas = document.createElement('canvas'),
@@ -32,6 +38,18 @@
 			mouseY = ( event.clientY - halfHeight );
 	}
 
+	function onWindowResize() {
+
+		windowHalfX = window.innerWidth / 2;
+		windowHalfY = window.innerHeight / 2;
+
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+
+		renderer.setSize( window.innerWidth, window.innerHeight );
+
+	}
+
 	function createLoadingScene () {
 		var object, geometry, material, light, count = 500, range = 300;
 		var context = {
@@ -40,53 +58,120 @@
 		};
 
 		context.camera.position.z = 100;
-
-		material = new THREE.MeshLambertMaterial( { color:0xffffff } );
-		geometry = new THREE.CubeGeometry( 4,4,4 );
-
-		for( var i = 0; i < count; i++ ) {
-
-			object = new THREE.Mesh( geometry, material );
-
-			object.position.x = ( Math.random() - 0.5 ) * range;
-			object.position.y = ( Math.random() - 0.5 ) * range;
-			object.position.z = ( Math.random() - 0.5 ) * range;
-
-			object.rotation.x = Math.random() * 6;
-			object.rotation.y = Math.random() * 6;
-			object.rotation.z = Math.random() * 6;
-
-			object.matrixAutoUpdate = false;
-			object.updateMatrix();
-
-			context.scene.add( object );
-
-		}
-
 		context.scene.matrixAutoUpdate = false;
-		context.scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
-
-		context.scene.add( new THREE.AmbientLight( 0x1c1c1c ) );
-
-		light = new THREE.PointLight( 0xffffff );
-		context.scene.add( light );
-
-		light = new THREE.DirectionalLight( 0x111111 );
-		light.position.x = 1;
-		context.scene.add( light );
 
 		return context;
 
 	}
 
+	function handle_update ( result, pieces ) {
+		var m, material, count = 0;
+
+		for ( m in result.materials ) {
+
+			material = result.materials[ m ];
+			if ( ! ( material instanceof THREE.MeshFaceMaterial ) ) {
+
+				if( !material.program ) {
+
+					renderer.initMaterial( material, result.scene.__lights, result.scene.fog );
+
+					count += 1;
+					if( count > pieces ) {
+						break;
+					}
+
+				}
+
+			}
+			material.shading = THREE.FlatShading;
+
+		}
+	}
+
+	function callbackProgress ( progress, result ) {
+
+		var bar = 250,
+			total = progress.total_models + progress.total_textures,
+			loaded = progress.loaded_models + progress.loaded_textures;
+
+		if ( total )
+			bar = Math.floor( bar * loaded / total );
+
+		count = 0;
+		for ( var m in result.materials ) count++;
+
+		handle_update( result, Math.floor( count/total ) );
+
+	}
+
+
+	function callbackFinished ( result ) {
+
+		camera = result.currentCamera;
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		scene = result.scene;
+		handle_update( result, 1 );
+		scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
+		scene.add( new THREE.AmbientLight( 0x3c3c3c ) );
+
+		for ( var i = 0; i < scene.children.length; i++ ) {
+			if ( scene.children[0] instanceof THREE.Mesh && scene.children[0].name === "Icosphere" )
+				rotObject = scene.children[0];
+		}
+
+		composer = new THREE.EffectComposer( renderer );
+		composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+/*		var effect = new THREE.ShaderPass( THREE.DotScreenShader );
+		effect.uniforms[ 'scale' ].value = 10;
+		composer.addPass( effect );*/
+
+		effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+		effect.uniforms[ 'amount' ].value = 0.0015;
+		effect.renderToScreen = true;
+		composer.addPass( effect );
+
+	}
+
+	// nuttöööö
+	function loadBlenderScene ( path ) {
+		var loader = new THREE.SceneLoader();
+		loader.callbackProgress = callbackProgress;
+		loader.load( path, callbackFinished);
+	}
+
 	function render() {
 
-		camera.position.x += ( mouseX - camera.position.x ) * .001;
-		camera.position.y += ( - mouseY - camera.position.y ) * .001;
+		//camera.position.x += ( mouseX - camera.position.x ) * .001;
+		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
+
+		if (rotObject) {
+
+			rotObject.rotation.z += .005;
+
+			glitchCounter = (glitchCounter + 1) % (100 + glitchRepeats);
+
+			if (glitchCounter > 98 && glitchCounter < (100 + glitchRepeats)) {
+
+				if (glitchRepeatCounter === 0) {
+					glitchStart = effect.uniforms[ 'amount' ].value;
+					glitchRepeatCounter++;
+				} else if (glitchRepeatCounter === glitchRepeats) {
+					effect.uniforms[ 'amount' ].value = glitchStart;
+					glitchRepeatCounter = 0;
+				} else {
+					effect.uniforms[ 'amount' ].value = Math.random() * 0.015;
+					glitchRepeatCounter++;
+				}
+			}
+
+		}
 
 		camera.lookAt( scene.position );
-		//composer.render(scene, camera);
-		renderer.render(scene, camera);
+		composer.render(scene, camera);
+		//renderer.render(scene, camera);
 	}
 
 	function animate() {
@@ -97,12 +182,15 @@
 
 	}
 
+
+
 	function init () {
 		// Globals
 		container = document.getElementById('threeBackground');
 
 		// Events
 		document.addEventListener( 'mousemove', onDocumentMouseMoveHandler, false );
+		window.addEventListener( 'resize', onWindowResize, false );
 
 		var loadScene = createLoadingScene();
 
@@ -114,29 +202,24 @@
 		renderer.setClearColor( 0x3C3C3C, 1 );
 		renderer.domElement.style.position = "relative";
 
-/*		// postprocessing
+		// postprocessing
 
 		composer = new THREE.EffectComposer( renderer );
 		composer.addPass( new THREE.RenderPass( scene, camera ) );
 
-		var effect = new THREE.ShaderPass( THREE.DotScreenShader );
-		effect.uniforms[ 'scale' ].value = 10;
-		composer.addPass( effect );
-
-		var effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-		effect.uniforms[ 'amount' ].value = 0.0015;
-		effect.renderToScreen = true;
-		composer.addPass( effect );*/
-
 
 		container.appendChild(renderer.domElement);
+
+		loadBlenderScene('scene/scene.js');
+
 
 		animate();
 
 	}
 
-	window.onload = function () {
-		init();
-	};
+	//start if webgl supported
+	if ( Modernizr.webgl ){
+		window.onload = function () { init(); };
+	}
 
 })();
