@@ -118,5 +118,122 @@
             </div>            
         </blink>
         <script type="text/javascript" src="javascript/main.js"></script>
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+            
+            // switch on high precision floats
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+            
+            uniform float amplitude;
+            attribute float displacement;
+            varying vec3 vNormal;
+
+            void main()
+            {
+                vNormal = normal;
+
+                // push the displacement into the three
+                // slots of a 3D vector so it can be
+                // used in operations with other 3D
+                // vectors like positions and normals
+                vec3 newPosition = position + 
+                                   normal * vec3(displacement * amplitude);
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
+            }
+            
+        </script>
+        
+        <script type="x-shader/x-fragment" id="fragmentshader">
+        
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+            
+            uniform float amplitude;
+            varying vec3 vNormal;
+
+            void main()
+            {
+
+                //// calc the dot product and clamp
+                vec3 light = vec3(0.5,0.2,1.0);
+
+                // ensure it's normalized
+                light = normalize(light);
+
+                // calculate the dot product of
+                // the light to the vertex normal
+                float dProd = max(0.0, dot(vNormal, light));
+
+                gl_FragColor = vec4(dProd + amplitude * amplitude,dProd,dProd * amplitude,1.0);
+            }
+        
+        </script>
+
+        <script type="x-shader/x-vertex" id="wireframeVertexShader">
+
+            attribute vec4 center;
+            varying vec4 vCenter;
+
+            void main() {
+
+                vCenter = center;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+            }
+
+        </script>
+
+        <script type="x-shader/x-fragment" id="wireframeFragmentShader">
+
+            #extension GL_OES_standard_derivatives : enable
+
+            varying vec4 vCenter;
+
+            float edgeFactorTri() {
+
+                vec3 d = fwidth( vCenter.xyz );
+                vec3 a3 = smoothstep( vec3( 0.0 ), d * 1.5, vCenter.xyz );
+                return min( min( a3.x, a3.y ), a3.z );
+
+            }
+
+            float edgeFactorQuad1() {
+
+                vec2 d = fwidth( vCenter.xy );
+                vec2 a2 = smoothstep( vec2( 0.0 ), d * 1.5, vCenter.xy );
+
+                return min( a2.x, a2.y );
+
+            }
+
+            float edgeFactorQuad2() {
+
+                vec2 d = fwidth( 1.0 - vCenter.xy );
+                vec2 a2 = smoothstep( vec2( 0.0 ), d * 1.5, 1.0 - vCenter.xy );
+
+                return min( a2.x, a2.y );
+            }
+
+            void main() {
+
+                if ( vCenter.w == 0.0 ) {
+
+                    gl_FragColor.rgb = mix( vec3( 1.0 ), vec3( 0.2 ), edgeFactorTri() );
+
+                } else {
+
+                    gl_FragColor.rgb = mix( vec3( 1.0 ), vec3( 0.2 ), min( edgeFactorQuad1(), edgeFactorQuad2() ) );
+
+                }
+
+                gl_FragColor.a = 0.2;
+
+            }
+
+        </script>
     </body>
 </html>

@@ -1,9 +1,11 @@
 (function () {
 
-	var width = window.innerWidth,
-		height = window.innerHeight,
-		halfWidth = width / 2,
-		halfHeight = height / 2,
+	var WIDTH = window.innerWidth,
+		HEIGHT = window.innerHeight,
+		HALFWIDTH = WIDTH / 2,
+		HALFHEIGTH = HEIGHT / 2,
+		VIEW_ANGLE = 60,
+	    ASPECT = WIDTH / HEIGHT,
 		container = null,
 		mouseX = 0,
 		mouseY = 0,
@@ -17,7 +19,47 @@
 		glitchStart = 0,
 		glitchRepeats = 10,
 		glitchRepeatCounter = 0,
-		rotObject = null;
+		sceneMeshObjtectsGraph = [],
+		sceneObject = null,
+		frame = 0,
+		radius = 50,
+		rings = 12,
+		segments = 12;
+
+	var mouse = new THREE.Vector2(),
+		offset = new THREE.Vector3( 10, 10, 10 ),
+		INTERSECTED,
+		controls;
+
+	var pickingData = [], pickingTexture, pickingScene;
+	var objects = [], highlightBox;
+
+	var clock = new THREE.Clock();
+
+	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+
+	var defaultCamera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, 0.1, 10000 );
+	var firstPersonCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, 1, 20000 );
+	var camera = firstPersonCamera;
+
+	var projector = new THREE.Projector();
+	var raycaster = new THREE.Raycaster();
+
+	// create shader
+	var attributes = {
+	    displacement: {
+	        type: 'f', // a float
+	        value: [] // an empty array
+	    }
+	};
+
+	// add a uniform for the amplitude
+	var uniforms = {
+	    amplitude: {
+	        type: 'f', // a float
+	        value: 0
+	    }
+	};
 
 	function getPixelRatio() {
 		var canvas = document.createElement('canvas'),
@@ -34,8 +76,8 @@
 	};
 
 	function onDocumentMouseMoveHandler (event) {
-			mouseX = ( event.clientX - halfWidth );
-			mouseY = ( event.clientY - halfHeight );
+			mouseX = ( event.clientX - HALFWIDTH );
+			mouseY = ( event.clientY - HALFHEIGTH );
 	}
 
 	function onWindowResize() {
@@ -84,6 +126,38 @@
 				}
 
 			}
+
+			var shaderMaterial = new THREE.ShaderMaterial({
+				uniforms: 		uniforms,
+				attributes:     attributes,
+				vertexShader: document.getElementById( 'vertexshader' ).textContent,
+				fragmentShader:  document.getElementById( 'fragmentshader' ).textContent
+			});
+
+			// create a new mesh with sphere geometry -
+			// we will cover the sphereMaterial next!
+			var sphere = new THREE.Mesh(
+			   new THREE.SphereGeometry(2,
+			   segments,
+			   rings),
+
+			   shaderMaterial);
+
+			// changes to the vertices
+			sphere.geometry.__dirtyVertices = true;
+
+			// changes to the normals
+			sphere.geometry.__dirtyNormals = true;
+
+			// now populate the array of attributes
+			var vertices = sphere.geometry.vertices;
+			var values = attributes.displacement.value
+			for(var v = 0; v < vertices.length; v++) {
+			    values.push(Math.random() * 30);
+			}
+
+			scene.add(sphere);
+
 			material.shading = THREE.FlatShading;
 
 		}
@@ -117,16 +191,12 @@
 		scene.add( new THREE.AmbientLight( 0x3c3c3c ) );
 
 		for ( var i = 0; i < scene.children.length; i++ ) {
-			if ( scene.children[0] instanceof THREE.Mesh && scene.children[0].name === "Icosphere" )
-				rotObject = scene.children[0];
+			if ( scene.children[0] instanceof THREE.Mesh )
+				sceneMeshObjtectsGraph.push(scene.children[i]);
 		}
 
 		composer = new THREE.EffectComposer( renderer );
 		composer.addPass( new THREE.RenderPass( scene, camera ) );
-
-/*		var effect = new THREE.ShaderPass( THREE.DotScreenShader );
-		effect.uniforms[ 'scale' ].value = 10;
-		composer.addPass( effect );*/
 
 		effect = new THREE.ShaderPass( THREE.RGBShiftShader );
 		effect.uniforms[ 'amount' ].value = 0.0015;
@@ -142,14 +212,22 @@
 		loader.load( path, callbackFinished);
 	}
 
-	function render() {
+	function render(time) {
+
+		// update the amplitude based on
+		// the frame value
+		uniforms.amplitude.value = Math.sin(time*0.006) * 0.4;
+		frame += 0.1;
 
 		//camera.position.x += ( mouseX - camera.position.x ) * .001;
 		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
 
-		if (rotObject) {
+		if (sceneMeshObjtectsGraph.length > -1) {
 
-			rotObject.rotation.z += .005;
+			for (var i=0; i < sceneMeshObjtectsGraph.length; i++) {
+				sceneObject = sceneMeshObjtectsGraph[0];
+				sceneObject.rotation.z += 0.0005;
+			}
 
 			glitchCounter = (glitchCounter + 1) % (100 + glitchRepeats);
 
@@ -162,7 +240,7 @@
 					effect.uniforms[ 'amount' ].value = glitchStart;
 					glitchRepeatCounter = 0;
 				} else {
-					effect.uniforms[ 'amount' ].value = Math.random() * 0.015;
+					effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
 					glitchRepeatCounter++;
 				}
 			}
@@ -174,11 +252,45 @@
 		//renderer.render(scene, camera);
 	}
 
-	function animate() {
+	function pick() {
 
+		var vector = new THREE.Vector3( mouseX, mouseY, 1 );
+		projector.unprojectVector( vector, camera );
+
+		raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
+		var intersects = raycaster.intersectObjects( scene.children );
+
+		if ( intersects.length > 0 ) {
+
+			if ( INTERSECTED != intersects[ 0 ].object ) {
+
+				if ( INTERSECTED && INTERSECTED.material ){
+					if(INTERSECTED.material.emissive) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+				}
+
+				INTERSECTED = intersects[ 0 ].object;
+				if( INTERSECTED.material.emissive ){
+					INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+					INTERSECTED.material.emissive.setHex( 0xff0000 );
+				}
+
+			}
+
+		} else {
+
+			if ( INTERSECTED && INTERSECTED.material.emissive ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+			INTERSECTED = null;
+
+		}
+
+
+	}
+
+	function animate(time) {
 		requestAnimationFrame( animate );
 
-		render();
+		render(time);
 
 	}
 
@@ -198,7 +310,7 @@
 		camera = loadScene.camera;
 
 		renderer = new THREE.WebGLRenderer({ antialiasing: true });
-		renderer.setSize(width * ratio, height * ratio);
+		renderer.setSize(WIDTH * ratio, HEIGHT * ratio);
 		renderer.setClearColor( 0x3C3C3C, 1 );
 		renderer.domElement.style.position = "relative";
 
