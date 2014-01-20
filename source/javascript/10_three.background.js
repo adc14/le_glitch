@@ -22,7 +22,7 @@
 		sceneMeshObjtectsGraph = [],
 		sceneObject = null,
 		frame = 0,
-		radius = 50,
+		radius = 1,
 		rings = 12,
 		segments = 12;
 
@@ -61,6 +61,10 @@
 	    }
 	};
 
+
+
+
+
 	function getPixelRatio() {
 		var canvas = document.createElement('canvas'),
 			context = canvas.getContext('2d'),
@@ -75,10 +79,18 @@
 		return ratio;
 	};
 
+
+
+
+
 	function onDocumentMouseMoveHandler (event) {
 			mouseX = ( event.clientX - HALFWIDTH );
 			mouseY = ( event.clientY - HALFHEIGTH );
 	}
+
+
+
+
 
 	function onWindowResize() {
 
@@ -91,6 +103,10 @@
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
 	}
+
+
+
+
 
 	function createLoadingScene () {
 		var object, geometry, material, light, count = 500, range = 300;
@@ -105,6 +121,10 @@
 		return context;
 
 	}
+
+
+
+
 
 	function handle_update ( result, pieces ) {
 		var m, material, count = 0;
@@ -148,6 +168,9 @@
 
 			// changes to the normals
 			sphere.geometry.__dirtyNormals = true;
+			sphere.scale.y = 1.2;
+			sphere.scale.x = 0.9;
+
 
 			// now populate the array of attributes
 			var vertices = sphere.geometry.vertices;
@@ -162,6 +185,10 @@
 
 		}
 	}
+
+
+
+
 
 	function callbackProgress ( progress, result ) {
 
@@ -178,6 +205,10 @@
 		handle_update( result, Math.floor( count/total ) );
 
 	}
+
+
+
+
 
 
 	function callbackFinished ( result ) {
@@ -205,6 +236,10 @@
 
 	}
 
+
+
+
+
 	// nuttöööö
 	function loadBlenderScene ( path ) {
 		var loader = new THREE.SceneLoader();
@@ -212,11 +247,15 @@
 		loader.load( path, callbackFinished);
 	}
 
+
+
+
+
 	function render(time) {
 
 		// update the amplitude based on
 		// the frame value
-		uniforms.amplitude.value = Math.sin(time*0.006) * 0.4;
+		uniforms.amplitude.value = Math.sin(time*0.0006) * 0.009;
 		frame += 0.1;
 
 		//camera.position.x += ( mouseX - camera.position.x ) * .001;
@@ -251,6 +290,10 @@
 		composer.render(scene, camera);
 		//renderer.render(scene, camera);
 	}
+
+
+
+
 
 	function pick() {
 
@@ -287,12 +330,23 @@
 
 	}
 
+
+
+
+
+
+
 	function animate(time) {
 		requestAnimationFrame( animate );
 
 		render(time);
 
 	}
+
+
+
+
+
 
 
 
@@ -329,9 +383,17 @@
 
 	}
 
+
+
+
+
 	//start if webgl supported
 	if ( Modernizr.webgl ){
 		window.onload = function () { init(); };
 	}
+
+
+
+
 
 })();
