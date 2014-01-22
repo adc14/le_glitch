@@ -19,16 +19,18 @@
     <body itemscope itemtype="http://schema.org/Event">
         <div id="threeBackground"></div>
         <blink>
-            <div>
-                <div class="img-glitch-source">
-                    <img itemprop="image" class="logo" src="/img/adc_bremen.png" alt="ADC">
-                </div>
-                <div class="img-glitch-target"></div>
-            </div>
             <span id="deadPixel">is it me you're looking for?</span>
             <article>
+                <section class="home">
+                    <div class="img-glitch-source">
+                        <img itemprop="image" class="logo" src="/img/adc_bremen.png" alt="ADC">
+                    </div>
+                    <div class="img-glitch-target"></div>
+                    <img itemprop="image" class="arrow" name="arrow" src="/img/arrow.png" alt="arrow">
+                </section>
                 <section >
                     <h2>tl;dr</h2>
+                    <canvas class="pixelLine" width="940" height="3"></canvas>
                     <ul>
                         <li itemprop="name">agile design camp</li>
                         <li itemprop="location">Weser Tower</li>
@@ -73,49 +75,58 @@
                     </p>
                 </section>
                 <section>
-                    <h2>Sponsoren</h2>
-                    <h3>Platin</h3>
-                    <img src="/img/hmmh-logo.png" alt="hmmh logo">
-                    <h3>Gold</h3>
-                    <img src="/img/hmmh-logo.png" alt="hmmh logo">
-                    <h3>Silber</h3>
-                    <img src="http://www.bremerhaven-touristik.de/schiffahrts-compagnie/bilder/logo_muellerditzen.gif">
-                    <h2>Werdet Sponsor!</h2>
-                    <a href="#">PDF LINK</a>
+                    <div>
+                        <h2>Sponsoren</h2>
+                        <h3>Platin</h3>
+                        <img src="/img/hmmh-logo.png" alt="hmmh logo">
+                        <h3>Gold</h3>
+                        <img src="/img/hmmh-logo.png" alt="hmmh logo">
+                        <h3>Silber</h3>
+                        <img src="http://www.bremerhaven-touristik.de/schiffahrts-compagnie/bilder/logo_muellerditzen.gif">
+                        <h2>Werdet Sponsor!</h2>
+                        <a href="#">PDF LINK</a>
+                    </div>
                 </section>
                 <section>
-                    <h2>Location</h2>
-                    <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zrg3uyab9SVA.kVhHw4pmgjE8" width="100%" height="480"></iframe>
+                    <div>
+                        <h2>Location</h2>
+                        <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zrg3uyab9SVA.kVhHw4pmgjE8" width="100%" height="480"></iframe>
+                    </div>
                 </section>
             </article>
             <footer>
-                <aside>
-                    <h3>Team</h3>
-                    <p>Das Barcamp wird von folgenden Personen organisiert:
-                    Kerstin Seidel
-                    Marius Bruns
-                    Andreas Dantz
-                    </p>
-                </aside>
-                <aside>
-                    <h3>Kontakt</h3>
-                    <p>
-                        <a href="" title="">twitter</a>
-                        <a href="" title="">facebook</a>
-                        <a href="" title="">email</a>
-                    </p>
-                </aside>
-                <aside>
-                    <h3>Impressum</h3>
-                    <p>Marius Bruns
-                    c/o hmmh multimediahaus AG
-                    Am Weser Terminal 1
-                    28217 Bremen</p>
-                </aside>
-            </footer>
-            <div class="special-link-for-sandra-bullock">
-                <a href="crash.html">&pi;</a>
-            </div>            
+                <form id="inputForm">
+                    <section class="output">
+                        <aside>
+                            <h3>Team</h3>
+                            <p>Das Barcamp wird von folgenden Personen organisiert:
+                            Kerstin Seidel
+                            Marius Bruns
+                            Andreas Dantz
+                            </p>
+                        </aside>
+                        <aside>
+                            <h3>Kontakt</h3>
+                            <p>
+                                <a href="" title="">twitter</a>
+                                <a href="" title="">facebook</a>
+                                <a href="" title="">email</a>
+                            </p>
+                        </aside>
+                        <aside>
+                            <h3>Impressum</h3>
+                            <p>Marius Bruns
+                            c/o hmmh multimediahaus AG
+                            Am Weser Terminal 1
+                            28217 Bremen</p>
+                        </aside>
+                    </section>
+                    <div class="special-link-for-sandra-bullock">
+                        <input type="text" name="inputField">
+                        <a href="crash.html">&pi;</a>
+                    </div>
+                </form>
+            </footer>           
         </blink>
         <script type="text/javascript" src="javascript/main.js"></script>
 
@@ -167,7 +178,7 @@
                 // the light to the vertex normal
                 float dProd = max(0.0, dot(vNormal, light));
 
-                gl_FragColor = vec4(0.2,0.2,0.2,0.2);
+                gl_FragColor = vec4(0.19,0.19,0.19,0.2);
             }
         
         </script>

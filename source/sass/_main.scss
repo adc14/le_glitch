@@ -14,8 +14,20 @@ body {
 
 article {
     box-sizing: border-box;
+    width: $full;
+    padding: 0 8%;
+    @include breakpoint(baby-bear) {
+        padding: 0;
+    }
+    
+}
+
+article section{
 	width: $full;
-	padding: 0 8%;
+    height: $full;
+}
+
+article section > * {
     @include breakpoint(baby-bear) {
         width: $half;
         margin: 0 auto;
@@ -60,4 +72,9 @@ audio,
 canvas,
 video {
     display: inline-block;
+}
+
+footer {
+    background: #1c1c1c;
+    padding: 15px;
 }

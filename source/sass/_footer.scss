@@ -1,0 +1,31 @@
+footer {
+
+	form {
+		overflow: hidden;
+	}
+
+	.success {
+		color: green;
+	}
+
+	.error {
+		color: orange;
+	}
+
+	.help {
+		color: yellow;
+	}
+
+	input {
+		background: #0c0c0c;
+		width: 96%;
+		height: 100%;
+		margin: 0;
+		padding: 0;
+		border: none;
+		color: #fff;
+		font-size: 16px;
+		padding: 5px 5px;
+	}
+
+}
