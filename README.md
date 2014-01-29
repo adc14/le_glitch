@@ -22,6 +22,9 @@ Nachdem alle Anforderungen installiert bzw. verfügbar sind muss über die Komma
 ### Grunt
 Das Konsolenprogramm zu Grunt lässt sich schnell und unkompliziert via ```npm install -g grunt-cli``` installieren. Dabei muss man sich nicht im Projektverzeichnis befinden- Wenn alles richtig installiert wurde wird nach dem ausführen des Befehls ```grunt --version``` ungefähr folgende Ausgabe zurückgegeben ```npm install -g grunt-cli```.
 
+### Grunt Server
+Das Projekt kann mit `grunt serve` initialisiert werden.
+
 ### SASS
 
 Neben Grunt wird auch SASS in diesem Projekt genutzt. Dies ist ganz einfach über folgendem Befehl zu installieren ```gem install sass```. Auch hier muss man sich nicht im Projektverzeichniss befinden.
@@ -36,3 +39,4 @@ Alle Sourcen sind in entsprechende Ordnerstrukturen unterteilt. (siehe Folder ``
 
 ###Build
 Der Build entspricht der Ordnerstruktur von ```source/``` mit Außnahme der HTML-Dateien. Diese werden direkt im Root ```build/``` abgelegt.
+
