@@ -127,18 +127,18 @@
                         <a href="crash.html">&pi;</a>
                     </div>
                 </form>
-            </footer>                    
-            </article>       
+            </footer>
+            </article>
         </blink>
         <script type="text/javascript" src="javascript/main.js"></script>
 
         <script type="x-shader/x-vertex" id="vertexshader">
-            
+
             // switch on high precision floats
             #ifdef GL_ES
             precision highp float;
             #endif
-            
+
             uniform float amplitude;
             attribute float displacement;
             varying vec3 vNormal;
@@ -155,15 +155,15 @@
 
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
             }
-            
+
         </script>
-        
+
         <script type="x-shader/x-fragment" id="fragmentshader">
-        
+
             #ifdef GL_ES
             precision highp float;
             #endif
-            
+
             uniform float amplitude;
             varying vec3 vNormal;
 
@@ -182,7 +182,7 @@
 
                 gl_FragColor = vec4(0.19,0.19,0.19,0.2);
             }
-        
+
         </script>
 
     </body>
