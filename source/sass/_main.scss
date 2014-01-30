@@ -12,6 +12,10 @@ body {
     color: $text-color;
 }
 
+html, body, article {
+    height: $full;
+}
+
 article {
     box-sizing: border-box;
     width: $full;
@@ -24,7 +28,6 @@ article {
 
 article section{
 	width: $full;
-    height: $full;
 }
 
 article section > * {
@@ -75,6 +78,20 @@ video {
 }
 
 footer {
+    position: relative;
     background: #1c1c1c;
     padding: 15px;
+}
+
+.fullscreen {
+    min-height: $full;
+    height: $full;
+    display: table;
+    position: relative;
+}
+
+.fullscreen-wrapper {
+    padding: 0;
+    display: table-cell;
+    vertical-align: middle;
 }

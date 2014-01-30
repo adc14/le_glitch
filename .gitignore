@@ -4,3 +4,8 @@ node_modules/
 build/
 .sass-cache/
 assets/dist/
+assets/js/dist/main.min.js
+
+assets/css/style.css
+
+assets/css/style.css
