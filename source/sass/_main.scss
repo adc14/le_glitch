@@ -38,7 +38,11 @@ article section > * {
     }
 }
 
-section{
+article section h2 {
+    margin: 2em auto 1em auto;
+}
+
+section {
 	margin: 0 auto;
 }
 
@@ -86,8 +90,13 @@ footer {
 .fullscreen {
     min-height: $full;
     height: $full;
+    width: $full;
     display: table;
     position: relative;
+}
+
+.fullscreen ul {
+    margin-bottom: 1em;
 }
 
 .fullscreen-wrapper {
