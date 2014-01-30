@@ -22,7 +22,7 @@
             <article>
                 <section class="home">
                     <div class="img-glitch-source">
-                        <img itemprop="image" class="logo" src="/img/adc_bremen_1337.gif" alt="ADC">
+                        <img itemprop="image" class="logo" src="/img/adc_bremen.png" alt="ADC">
                     </div>
                     <div class="img-glitch-target"></div>
                     <img itemprop="image" class="arrow" name="arrow" src="/img/arrow.png" alt="arrow">
@@ -128,6 +128,59 @@
             </footer>
         </blink>
         <script type="text/javascript" src="javascript/main.js"></script>
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+
+            // switch on high precision floats
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+
+            uniform float amplitude;
+            attribute float displacement;
+            varying vec3 vNormal;
+
+            void main()
+            {
+                vNormal = normal;
+
+                // push the displacement into the three
+                // slots of a 3D vector so it can be
+                // used in operations with other 3D
+                // vectors like positions and normals
+                vec3 newPosition = position + normal * vec3(displacement * amplitude);
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
+            }
+
+        </script>
+
+        <script type="x-shader/x-fragment" id="fragmentshader">
+
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+
+            uniform float amplitude;
+            varying vec3 vNormal;
+
+            void main()
+            {
+
+                //// calc the dot product and clamp
+                vec3 light = vec3(0.5,0.2,1.0);
+
+                // ensure it's normalized
+                light = normalize(light);
+
+                // calculate the dot product of
+                // the light to the vertex normal
+                float dProd = max(0.0, dot(vNormal, light));
+
+                gl_FragColor = vec4(0.19,0.19,0.19,0.2);
+            }
+
+        </script>
 
     </body>
 </html>

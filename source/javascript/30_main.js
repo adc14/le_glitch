@@ -9,20 +9,11 @@
 		w.doCrazyStuff = command;
 
 		var easter_egg = new Konami();
+		console.log("konami code loaded");
 		easter_egg.code = function() {
 			window.location.href = "crash.html";
 		}
 		easter_egg.load();
-
-        if( $('.l33t') ){
-            console.log('... such intense');
-            console.log('much love....ö')
-            console.log('...wow...')
-            console.log('(ﾉಥ益ಥ）ﾉ﻿ ┻━┻');
-            console.log('┬─┬ノ( º _ ºノ)', 'chill out bro');
-            console.log('┬──┬﻿ ¯\_(ツ)');
-            console.log('(ﾉಥ益ಥ）ﾉ﻿ /(.o.) ', 'Dont flip me, Bro!')
-        }
 
 })(window);
 
@@ -85,7 +76,7 @@ $(document).ready(function($) {
 
 				canvas.style.width = window.innerWidth + 'px';
 				canvas.style.maxHeight = canvas.height + 'px';
-
+				
 
 			}
 		}
@@ -142,11 +133,11 @@ $(document).ready(function($) {
 	   return event.keyCode;
 	}
 
-
+	
 	sections = $('article section').toArray()
 
 	// customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
-
+	
 	// $('article section').each(function () {
 	// 	this.style.height = window.innerHeight + 'px';
 	// });
@@ -154,7 +145,7 @@ $(document).ready(function($) {
 
 	$( "#inputForm" ).on( "keydown", function( event ) {
 	  //console.log( event.type + ": " +  event.which );
-
+	  
 	  //arrow up
 	  if (event.which === 38) {
 	  	$('input[name~="inputField"]',this).val(lastText);
@@ -174,47 +165,47 @@ $(document).ready(function($) {
 		switch (text.toLowerCase()) {
 
 
-			case "marco": 	$(aside).addClass('success');
+			case "marco": 	$(aside).addClass('success'); 
 						 	p.innerHTML = 'Tipp: Terminal ♡';
 			              	break;
 
-          	case "help": 	$(aside).addClass('help');
+          	case "help": 	$(aside).addClass('help'); 
           				 	p.innerHTML = 'Tipp: Try Marco';
           	              	break;
 
-          	case "hilfe": 	$(aside).addClass('help');
+          	case "hilfe": 	$(aside).addClass('help'); 
           				 	p.innerHTML = 'Tipp: Try Marco';
           	              	break;
 
-          	case "ls": 	$(aside).addClass('success');
+          	case "ls": 	$(aside).addClass('success'); 
           				 	p.innerHTML = 'secret.txt';
           	              	break;
 
-          	case "open secret.txt": 	$(aside).addClass('success');
+          	case "open secret.txt": 	$(aside).addClass('success'); 
 		              				 	p.innerHTML = '0x3a66f2';
 		              	              	break;
 
-          	case "vi secret.txt": 	$(aside).addClass('success');
+          	case "vi secret.txt": 	$(aside).addClass('success'); 
 	              				 	p.innerHTML = '0x3a66f2';
 	              	              	break;
 
-          	case "vim secret.txt": 	$(aside).addClass('success');
+          	case "vim secret.txt": 	$(aside).addClass('success'); 
 	              				 	p.innerHTML = '0x3a66f2';
 	              	              	break;
 
-          	case "0x3a66f2": 	$(aside).addClass('success');
+          	case "0x3a66f2": 	$(aside).addClass('success'); 
               				 	p.innerHTML = 'Your Win: Free drink!';
               	              	break;
 
-          	case "help": 	$(aside).addClass('success');
+          	case "help": 	$(aside).addClass('success'); 
           				 	p.innerHTML = 'Tipp: Try Marco';
           	              	break;
-
+		
 			default: 		$(aside).addClass('error');
 							p.innerHTML = 'command not found : ' + text;
 		}
 
-
+		
 
 		$(aside).append(p);
 		$(output).append(aside);
