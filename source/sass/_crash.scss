@@ -19,7 +19,7 @@
 }
 
 .l33t{
-    background: white url('../img/hassel.gif') no-repeat fixed center;
+    background: blue url('../img/hassel.gif') no-repeat fixed center;
 
     *{
         font-family: "Comic Sans MS";
@@ -45,11 +45,27 @@
     h3{font-size: 28px;}
     h4{font-size: 25px;}
     h5{font-size: 21px;}
+
+    a{
+        &:before{
+            content:"";
+            background: url('../img/hot.gif') no-repeat left;
+            width: 50px;
+            height: 24px;
+            display: inline-block;
+        }
+    }
+
     #threeBackground{
         display: none;
     }
+
     footer{
         background: yellow;
+    }
+
+    section > section > *{
+        width: 100%;
     }
 
     .great-badges{
