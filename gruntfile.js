@@ -213,74 +213,41 @@ module.exports = function(grunt){
 
         //watchtasks
         watch: {
-            default: {
-                livereload: {
-                    // Browser live reloading
-                    // https://github.com/gruntjs/grunt-contrib-watch#live-reloading
-                    options: {
-                        livereload: true
-                    },
-                    files: [
-                        'build/**'
-                    ]
+            livereload: {
+                // Browser live reloading
+                // https://github.com/gruntjs/grunt-contrib-watch#live-reloading
+                options: {
+                    livereload: true
                 },
-                html: {
-                    files: [HTML_SOURCE],
-                    tasks: ['buildhtml']
-                },
-                js : {
-                    files: [JS_SOURCE, 'source/tests/javascript/*', 'source/tests/javascript/**/*'],
-                    tasks: ['buildjs']
-                },
-                css: {
-                    files: ['source/sass/**/*.scss'],
-                    tasks: ['buildcss']
-                },
-                htmlcss: {
-                    files: ['source/sass/**/*.scss', HTML_SOURCE],
-                    tasks: ['buildhtml', 'buildcss', 'buildassets']
-                }
-            }
-            webgl: {
-                livereload: {
-                    // Browser live reloading
-                    // https://github.com/gruntjs/grunt-contrib-watch#live-reloading
-                    options: {
-                        livereload: true
-                    },
-                    files: [
-                        'build/**'
-                    ]
-                },
-                html: {
-                    files: [HTML_SOURCE],
-                    tasks: ['buildhtml']
-                },
-                js : {
-                    files: [JS_SOURCE, 'source/tests/javascript/*', 'source/tests/javascript/**/*'],
-                    tasks: ['buildjs']
-                },
-                css: {
-                    files: ['source/sass/**/*.scss'],
-                    tasks: ['buildcss']
-                },
-                htmlcss: {
-                    files: ['source/sass/**/*.scss', HTML_SOURCE],
-                    tasks: ['buildhtml', 'buildcss', 'buildassets']
-                },
-                scene: {
-                    files: ['source/scene/**', HTML_SOURCE],
-                    tasks: ['copy:scene']
-                }
+                files: [
+                    'build/**'
+                ]
+            },
+            html: {
+                files: [HTML_SOURCE],
+                tasks: ['buildhtml']
+            },
+            js : {
+                files: [JS_SOURCE, 'source/tests/javascript/*', 'source/tests/javascript/**/*'],
+                tasks: ['buildjs']
+            },
+            css: {
+                files: ['source/sass/**/*.scss'],
+                tasks: ['buildcss']
+            },
+            htmlcss: {
+                files: ['source/sass/**/*.scss', HTML_SOURCE],
+                tasks: ['buildhtml', 'buildcss', 'buildassets']
+            },
+            scene: {
+                files: ['source/scene/**', HTML_SOURCE],
+                tasks: ['copy:scene']
             }
         }
     });
 
     grunt.registerTask('default',   []);
-    // Server is for Val, Server2 is for the rest uf us
-    grunt.registerTask('server',   ['build','connect:livereload','watch:webgl']);
-    grunt.registerTask('server2',   ['build','connect:livereload','watch']);
-
+    grunt.registerTask('server',   ['build','connect:livereload','watch']);
     grunt.registerTask('build',   ['buildjs', 'buildhtml', 'buildcss', 'buildassets']);
     grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
     // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
