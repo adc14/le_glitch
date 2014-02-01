@@ -2,7 +2,8 @@
 .glitch {
   color: white;
   position: relative;
-  margin: 0 auto;
+  margin: 2em auto 1em auto;
+  font-size: 2em;
 }
 
 @-webkit-keyframes noise-anim {
@@ -95,12 +96,12 @@
   content: attr(data-text);
   position: absolute;
   left: 2px;
-  text-shadow: -1px 0 red;
+  text-shadow: -1px 0 rgba(0,255,0,0.5);
   top: 0;
-  color: white;
+  color: rgba(0,255,0,0.5);
   overflow: hidden;
-  clip: rect(0, 900px, 0, 0);
-  -webkit-animation: noise-anim 2s infinite linear alternate-reverse;
+  clip: rect(0, 800px, 0, 0);
+  -webkit-animation: noise-anim 0.5s infinite linear alternate-reverse;
 }
 
 @-webkit-keyframes noise-anim-2 {
@@ -192,11 +193,11 @@
 .glitch:before {
   content: attr(data-text);
   position: absolute;
-  left: -2px;
-  text-shadow: 1px 0 blue;
+  left: -4px;
+  text-shadow: 1px 0 rgba(255,0,0,0.5);
   top: 0;
-  color: white;
+  color: rgba(255,0,0,0.5);
   overflow: hidden;
   clip: rect(0, 900px, 0, 0);
-  -webkit-animation: noise-anim-2 3s infinite linear alternate-reverse;
+  -webkit-animation: noise-anim-2 5s infinite linear alternate-reverse;
 }
