@@ -10,7 +10,7 @@
 
 		var easter_egg = new Konami();
 		easter_egg.code = function() {
-			window.location.href = "crash.html";
+			window.location.href = "konami.html";
 		}
 		easter_egg.load();
 
