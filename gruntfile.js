@@ -14,6 +14,8 @@ module.exports = function(grunt){
         FONTS_BUILD = 'build/fonts/',
         CONNECT_PORT = 9001;
         PDF_SOURCE = 'source/pdf/',
+        SOUNDS_SOURCE = 'source/sounds/',
+        SOUNDS_BUILD = 'source/sounds/',
         SCENE_SOURCE = 'source/scene/',
         SCENE_BUILD = 'build/scene/',
         PDF_BUILD = 'build/pdf/';
@@ -199,6 +201,16 @@ module.exports = function(grunt){
                     }
                 ]
             },
+            sounds: {
+                files: [
+                    {
+                        cwd: SOUNDS_SOURCE,
+                        src: '**',
+                        dest: SOUNDS_BUILD,
+                        expand: true
+                    }
+                ]
+            },
             scene: {
                 files: [
                     {
@@ -239,6 +251,10 @@ module.exports = function(grunt){
                 files: ['source/sass/**/*.scss', HTML_SOURCE],
                 tasks: ['buildhtml', 'buildcss', 'buildassets']
             },
+            sounds: {
+                files: ['source/sounds/**', HTML_SOURCE],
+                tasks: ['copy:sounds']
+            },
             scene: {
                 files: ['source/scene/**', HTML_SOURCE],
                 tasks: ['copy:scene']
@@ -253,7 +269,7 @@ module.exports = function(grunt){
     // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildjs',  ['concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
-    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf', 'copy:scene']);
+    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf', 'copy:sounds', 'copy:scene']);
 
 
 };
