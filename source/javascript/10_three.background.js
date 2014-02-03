@@ -65,7 +65,9 @@
 		frame = 0,
 		radius = 1,
 		rings = 12,
-		segments = 12;
+		segments = 12,
+		flatShadingExceptions = ['Floor']
+		rotationExceptions = ['Floor', 'Glitch'];
 
 	var mouse = new THREE.Vector2(),
 		offset = new THREE.Vector3( 10, 10, 10 ),
@@ -185,43 +187,8 @@
 					}
 
 				}
-
+				
 			}
-
-			var shaderMaterial = new THREE.ShaderMaterial({
-				uniforms: 		uniforms,
-				attributes:     attributes,
-				vertexShader: document.getElementById( 'vertexshader' ).textContent,
-				fragmentShader:  document.getElementById( 'fragmentshader' ).textContent
-			});
-
-			// create a new mesh with sphere geometry -
-			// we will cover the sphereMaterial next!
-			var sphere = new THREE.Mesh(
-			   new THREE.SphereGeometry(2,
-			   segments,
-			   rings),
-
-			   shaderMaterial);
-
-			// changes to the vertices
-			sphere.geometry.__dirtyVertices = true;
-
-			// changes to the normals
-			sphere.geometry.__dirtyNormals = true;
-			sphere.scale.y = 1.2;
-			sphere.scale.x = 0.9;
-
-
-			// now populate the array of attributes
-			var vertices = sphere.geometry.vertices;
-			var values = attributes.displacement.value
-			for(var v = 0; v < vertices.length; v++) {
-			    values.push(Math.random() * 30);
-			}
-
-			scene.add(sphere);
-
 			material.shading = THREE.FlatShading;
 
 		}
@@ -250,43 +217,143 @@
 
 
 
+		function setAllSceneObjectsFlat(exceptArr) {
 
-
-	function callbackFinished ( result ) {
-
-		camera = result.currentCamera;
-		camera.aspect = window.innerWidth / window.innerHeight;
-		camera.updateProjectionMatrix();
-		scene = result.scene;
-		handle_update( result, 1 );
-		scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
-		scene.add( new THREE.AmbientLight( 0x3c3c3c ) );
-
-		for ( var i = 0; i < scene.children.length; i++ ) {
-			if ( scene.children[0] instanceof THREE.Mesh )
-				sceneMeshObjtectsGraph.push(scene.children[i]);
+			var except = false;
+			//set flat shading
+			for (var i = 0; i < scene.children.length; i++) {
+				if (scene.children[i]){
+					for (var z = 0; z < exceptArr.length; z++) {
+						if (exceptArr[i] === scene.children[i].name){
+							except = true;
+						}
+					}
+					if (scene.children[i].material && scene.children[i].material.materials) {
+						for (var x = 0; x < scene.children.length; x++) {
+							if (scene.children[i].material.materials[x] && !except) {
+								scene.children[i].material.materials[x].shading = THREE.FlatShading;
+								scene.children[i].material.materials[x].needsUpdate = true;
+							}
+						}
+					}
+					except = false;
+				}
+			}
 		}
 
-		composer = new THREE.EffectComposer( renderer );
-		composer.addPass( new THREE.RenderPass( scene, camera ) );
+		function firstCallbackFinished ( result ) {
 
-		effect = new THREE.ShaderPass( THREE.RGBShiftShader );
-		effect.uniforms[ 'amount' ].value = 0.0015;
-		effect.renderToScreen = true;
-		composer.addPass( effect );
+			camera = result.currentCamera;
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			scene = result.scene;
+			handle_update( result, 1 );
+			scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
+			scene.add( new THREE.AmbientLight( 0x3c3c3c ) );
 
+			composer = new THREE.EffectComposer( renderer );
+			composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+			effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+			effect.uniforms[ 'amount' ].value = 0.0015;
+			effect.renderToScreen = true;
+			composer.addPass( effect );
+
+			console.log(scene);
+
+
+			setAllSceneObjectsFlat(flatShadingExceptions);
+
+		}
+
+
+		function callbackFinished ( result ) {
+
+			camera = result.currentCamera;
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			scene = result.scene;
+			handle_update( result, 1 );
+			scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
+			scene.add( new THREE.AmbientLight( 0x3c3c3c ) );
+
+			composer = new THREE.EffectComposer( renderer );
+			composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+			effect = new THREE.ShaderPass( THREE.RGBShiftShader );
+			effect.uniforms[ 'amount' ].value = 0.0015;
+			effect.renderToScreen = true;
+			composer.addPass( effect );
+
+			var shaderMaterial = new THREE.ShaderMaterial({
+				uniforms: 		uniforms,
+				attributes:     attributes,
+				vertexShader: document.getElementById( 'vertexshader' ).textContent,
+				fragmentShader:  document.getElementById( 'fragmentshader' ).textContent
+			});
+
+			// create a new mesh with sphere geometry -
+			// we will cover the sphereMaterial next!
+			var sphere = new THREE.Mesh(
+			   new THREE.SphereGeometry(2,
+			   segments,
+			   rings),
+
+			   shaderMaterial);
+
+			// changes to the vertices
+			sphere.geometry.__dirtyVertices = true;
+
+			// changes to the normals
+			sphere.geometry.__dirtyNormals = true;
+			sphere.name = 'Glitch';
+			sphere.scale.y = 1.2;
+			sphere.scale.x = 0.7;
+			sphere.scale.z = 0.9;
+
+
+			// now populate the array of attributes
+			var vertices = sphere.geometry.vertices;
+			var values = attributes.displacement.value
+			for(var v = 0; v < vertices.length; v++) {
+			    values.push(Math.random() * 30);
+			}
+
+			scene.add(sphere);
+
+			console.log(scene);
+			//set flat shading
+			setAllSceneObjectsFlat(flatShadingExceptions);
+
+
+
+	/*		var loader = new THREE.JSONLoader;
+			var animation;
+
+			loader.load('scene/asteroid.js', function (geometry, materials) {
+			   var skinnedMesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
+			   skinnedMesh.position.y = 1;
+			   skinnedMesh.scale.set(1, 1, 1);
+			   materials[0].shading = THREE.FlatShading;
+			   scene.add(skinnedMesh);
+			});*/
+
+		}
+
+
+	// mietääää
+	function loadFirstBlenderScene ( path ) {
+		var loader = new THREE.SceneLoader();
+		loader.callbackProgress = callbackProgress;
+		loader.load( path, firstCallbackFinished);
 	}
 
-
-
-
-
-	// nuttöööö
-	function loadBlenderScene ( path ) {
+	function loadSecondBlenderScene ( path ) {
 		var loader = new THREE.SceneLoader();
 		loader.callbackProgress = callbackProgress;
 		loader.load( path, callbackFinished);
 	}
+
 
 
 
@@ -302,11 +369,14 @@
 		//camera.position.x += ( mouseX - camera.position.x ) * .001;
 		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
 
-		if (sceneMeshObjtectsGraph.length > -1) {
+		if (scene.children.length > -1) {
 
-			for (var i=0; i < sceneMeshObjtectsGraph.length; i++) {
-				sceneObject = sceneMeshObjtectsGraph[0];
-				sceneObject.rotation.z += 0.0005;
+			var found = false;
+			for (var i=0; i < scene.children.length; i++) {
+				if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
+					sceneObject = scene.children[i];
+					sceneObject.rotation.z += 0.0005;
+				}
 			}
 
 			glitchCounter = (glitchCounter + 1) % (100 + glitchRepeats);
@@ -417,7 +487,10 @@
 
 		container.appendChild(renderer.domElement);
 
-		loadBlenderScene('scene/scene.js');
+		loadFirstBlenderScene('scene/scene1.js');
+		setTimeout(function () {
+			loadSecondBlenderScene('scene/scene2.js');
+		}, 5000);
 
 
 		animate();
