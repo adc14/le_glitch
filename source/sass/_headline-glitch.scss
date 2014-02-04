@@ -3,8 +3,7 @@
   color: white;
   position: relative;
   margin: 2em auto 1em auto;
-  font-size: 6em;
-  z-index: 3;
+  font-size: 2em;
 }
 
 @-webkit-keyframes noise-anim {
@@ -99,7 +98,7 @@
   left: 2px;
   text-shadow: -1px 0 rgba(0,255,0,0.5);
   top: 0;
-  color: white;
+  color: rgba(0,255,0,0.5);
   overflow: hidden;
   clip: rect(0, 800px, 0, 0);
   -webkit-animation: noise-anim 0.5s infinite linear alternate-reverse;
@@ -197,8 +196,8 @@
   left: -4px;
   text-shadow: 1px 0 rgba(255,0,0,0.5);
   top: 0;
-  color: white;
+  color: rgba(255,0,0,0.5);
   overflow: hidden;
-  clip: rect(0, 800px, 0, 0);
+  clip: rect(0, 900px, 0, 0);
   -webkit-animation: noise-anim-2 5s infinite linear alternate-reverse;
 }
