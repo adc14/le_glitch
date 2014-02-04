@@ -40,7 +40,7 @@
 
 
 
-
+    // globals
 	var WIDTH = window.innerWidth,
 		HEIGHT = window.innerHeight,
 		HALFWIDTH = WIDTH / 2,
@@ -68,7 +68,9 @@
 		segments = 12,
 		flatShadingExceptions = ['Floor']
 		rotationExceptions = ['Floor', 'Glitch'],
-		SCENELAMPS = [];
+		SCENELAMPS = [],
+		pulsar = null,
+		pulsarRadius = 0.5;
 
 	var mouse = new THREE.Vector2(),
 		offset = new THREE.Vector3( 10, 10, 10 ),
@@ -82,12 +84,12 @@
 
 	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 
-	var defaultCamera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, 0.1, 10000 );
-	var firstPersonCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, 1, 20000 );
-	var camera = firstPersonCamera;
+	var defaultCamera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, 0.1, 10000 ),
+		firstPersonCamera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, 1, 20000 ),
+		camera = firstPersonCamera;
 
-	var projector = new THREE.Projector();
-	var raycaster = new THREE.Raycaster();
+	var projector = new THREE.Projector(),
+		raycaster = new THREE.Raycaster();
 
 	// create shader
 	var attributes = {
@@ -106,9 +108,8 @@
 	};
 
 
-
-
-
+	// Small Helpers
+	
 	function getPixelRatio() {
 		var canvas = document.createElement('canvas'),
 			context = canvas.getContext('2d'),
@@ -122,6 +123,10 @@
 
 		return ratio;
 	};
+
+	// Small Helpers 
+
+
 
 
 
@@ -342,6 +347,37 @@
 		}
 
 		scene.add(sphere);
+
+		sphereMaterial =
+		  new THREE.MeshLambertMaterial(
+		    {
+		      color: 0xCC0000,
+		      transparent: true,
+		      opacity: 0.25
+		    });
+
+		// set up the sphere vars
+		var radius = pulsarRadius,
+		    segments = 24,
+		    rings = 24;
+
+		// create a new mesh with
+		// sphere geometry - we will cover
+		// the sphereMaterial next!
+		pulsar = new THREE.Mesh(
+
+		  new THREE.SphereGeometry(
+		    radius,
+		    segments,
+		    rings),
+
+		  sphereMaterial);
+
+		// add the sphere to the scene
+		scene.add(pulsar);
+
+
+
 		//set flat shading
 		setAllSceneObjectsFlat(flatShadingExceptions);
 		$.ionSound.play("computer_error");
@@ -375,8 +411,6 @@
 
 		if (scene.children.length > -1) {
 
-			var found = false;
-
 			for (var i=0; i < scene.children.length; i++) {
 				if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
 					sceneObject = scene.children[i];
@@ -384,9 +418,9 @@
 				}
 			}
 
-			glitchCounter = (glitchCounter + 1) % (300 + glitchRepeats);
+			glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
 
-			if (glitchCounter > 298 && glitchCounter < (300 + glitchRepeats)) {
+			if (glitchCounter > 248 && glitchCounter < (250 + glitchRepeats)) {
 
 				if (glitchRepeatCounter === 0) {
 					glitchStart = effect.uniforms[ 'amount' ].value;
@@ -403,6 +437,14 @@
 					if (SCENELAMPS.length)
 						SCENELAMPS[1].intensity = Math.random() * 0.35;
 						SCENELAMPS[2].intensity = Math.random() * 0.95;
+					if (pulsar && pulsarRadius < 18) {
+						pulsarRadius += Math.random() * 2;
+						pulsar.scale.x = pulsarRadius;
+						pulsar.scale.y = pulsarRadius;
+						pulsar.scale.z = pulsarRadius;
+					} else if ( pulsarRadius >= 18 ) {
+						pulsarRadius = 1;
+ 					}
 					glitchRepeatCounter++;
 				}
 			}
