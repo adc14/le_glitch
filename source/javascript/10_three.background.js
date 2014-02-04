@@ -122,7 +122,18 @@
 			ratio = devicePixelRatio / backingStoreRatio;
 
 		return ratio;
-	};
+	}
+
+	function getYScrollPosition(){
+	    if(window.pageYOffset!= undefined){
+	        return pageYOffset;
+	    } else {
+	        var sx, sy;
+	        sx= document.documentElement.scrollLeft || 0;
+	        sy= document.documentElement.scrollTop || 0;
+	        return sy;
+	    }
+	}
 
 	// Small Helpers END
 
@@ -426,14 +437,16 @@
 				} else if (glitchRepeatCounter === glitchRepeats) {
 					effect.uniforms[ 'amount' ].value = glitchStart;
 					glitchRepeatCounter = 0;
-					if (SCENELAMPS.length)
+					if (SCENELAMPS.length){
 						SCENELAMPS[1].intensity = 0.6;
 						SCENELAMPS[2].intensity = 0.6;
+					}
 				} else {
 					effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
-					if (SCENELAMPS.length)
+					if (SCENELAMPS.length){
 						SCENELAMPS[1].intensity = Math.random() * 0.35;
 						SCENELAMPS[2].intensity = Math.random() * 0.95;
+					}
 					if (pulsar && pulsarRadius < 18) {
 						pulsarRadius += Math.random() * 2;
 						pulsar.scale.x = pulsarRadius;

@@ -15,8 +15,8 @@ module.exports = function(grunt){
         CONNECT_PORT = 9001;
         PDF_SOURCE = 'source/pdf/',
         SOUNDS_SOURCE = 'source/sounds/',
-        SOUNDS_BUILD = 'source/sounds/',
-        SCENE_SOURCE = 'build/scene/',
+        SOUNDS_BUILD = 'build/sounds/',
+        SCENE_SOURCE = 'source/scene/',
         SCENE_BUILD = 'build/scene/',
         PDF_BUILD = 'build/pdf/';
 
