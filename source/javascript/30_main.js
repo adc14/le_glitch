@@ -8,22 +8,6 @@
 
 		w.doCrazyStuff = command;
 
-		var easter_egg = new Konami();
-		easter_egg.code = function() {
-			window.location.href = "crash.html";
-		}
-		easter_egg.load();
-
-        if( $('.l33t') ){
-            console.log('... such intense');
-            console.log('much love....ö')
-            console.log('...wow...')
-            console.log('(ﾉಥ益ಥ）ﾉ﻿ ┻━┻');
-            console.log('┬─┬ノ( º _ ºノ)', 'chill out bro');
-            console.log('┬──┬﻿ ¯\_(ツ)');
-            console.log('(ﾉಥ益ಥ）ﾉ﻿ /(.o.) ', 'Dont flip me, Bro!')
-        }
-
 })(window);
 
 
@@ -223,6 +207,41 @@ $(document).ready(function($) {
 		e.preventDefault();
 		return false;
 	});
+
+
+	// Konami Code 
+	var easter_egg = new Konami();
+	easter_egg.code = function() {
+		window.location.href = "well-well-what-do-we-have-here.html";
+	}
+	easter_egg.load();
+
+
+	// page related arg tips
+	if( $('body').hasClass('main') ){
+		console.log("http://www.imdb.com/title/tt0113957/");
+	}
+
+    if( $('body').hasClass('l33t') ){
+        console.log('... such intense');
+        console.log('much love....ö')
+        console.log('...wow...')
+        console.log('(ﾉಥ益ಥ）ﾉ﻿ ┻━┻');
+        console.log('┬─┬ノ( º _ ºノ)', 'chill out bro');
+        console.log('┬──┬﻿ ¯\_(ツ)');
+        console.log('(ﾉಥ益ಥ）ﾉ﻿ /(.o.) ', 'Dont flip me, Bro!')
+    }
+    if( $('body').hasClass('pi') ){
+    	console.log("Gratulation - du hast die Seite kaputt gemacht");
+    	console.log("٩(͡๏̯͡๏)۶");
+    	console.log("Ich hoffe es war es wert... ");
+    	console.log("... vielleicht ist es dir auch eine Lehre... ");
+    	console.log("... man sollte nicht jedes PI anklicken, nur weil Sandra Bullock es gemacht hat... ");
+    	console.log("... ich meine... ");
+    	console.log("...schon die Tatsache, dass überhaupt etwas hier integriert wurde, was auf einer John Grisham Verfilmung basiert, ist schon seltsam... ");
+    	console.log("... was kommt als nächstes... ein KONAMI CODE???");
+    	console.log("ಠ_ಠ");
+    }
 });
 
 
