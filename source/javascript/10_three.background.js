@@ -124,10 +124,7 @@
 		return ratio;
 	};
 
-	// Small Helpers 
-
-
-
+	// Small Helpers END
 
 
 
@@ -293,11 +290,11 @@
 		$.ionSound({
 		    sounds: [
 		        "computer_error",
-		        "synth_stab:0.5"         // http://www.freesound.org/people/Erokia/sounds/216059/
+		        "synth_stab:0.5"        // http://www.freesound.org/people/Erokia/sounds/216059/
 		    ],
-		    path: "sounds/",             // set path to sounds
+		    path: "sounds/",            // set path to sounds
 		    multiPlay: true,            // playing only 1 sound at once
-		    volume: "0.3"                // not so loud please
+		    volume: "0.3"               // not so loud please
 		});
 
 		$.ionSound.play("computer_error");
