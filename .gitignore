@@ -1,0 +1,8 @@
+.DS_Store
+*.log
+node_modules/
+build/
+.sass-cache/
+assets/dist/
+assets/js/dist/main.min.js
+assets/
