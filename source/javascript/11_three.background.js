@@ -8,8 +8,11 @@
 
 
 
+	//==================================================================
+	// requestAnimFrame() Shim layer by Paul Irish
+	//==================================================================
+	
 
-	// shim layer with setTimeout fallback
 	window.requestAnimFrame = (function () {
 	  return  window.requestAnimationFrame       ||
 	          window.webkitRequestAnimationFrame ||
@@ -46,7 +49,10 @@
 
 
 
-    // globals
+    //==================================================================
+    // Globals
+    //==================================================================
+    
 	var WIDTH = window.innerWidth,
 		HEIGHT = window.innerHeight,
 		HALFWIDTH = WIDTH / 2,
@@ -75,8 +81,10 @@
 		flatShadingExceptions = ['Floor']
 		rotationExceptions = ['Floor', 'Glitch'],
 		SCENELAMPS = [],
+		SHARKS = [],
 		pulsar = null,
-		pulsarRadius = 0.5
+		pulsarRadius = 0.5,
+		particleSystem = null,
 		scrollPosition = 0,
 		segmentHeight = window.innerHeight;
 		scrollMarks = {
@@ -98,6 +106,7 @@
 		},
 		rotSpeed = 0.0008;
 
+
 	var mouse = new THREE.Vector2(),
 		offset = new THREE.Vector3( 10, 10, 10 ),
 		INTERSECTED,
@@ -117,6 +126,30 @@
 	var projector = new THREE.Projector(),
 		raycaster = new THREE.Raycaster();
 
+	// Particle System
+	// @particleCount needs to be at least the same count as sharks in second scene
+	var particleCount = 99, 
+	    particles = new THREE.Geometry(),
+		pMaterial = new THREE.ParticleBasicMaterial({
+			color: 0xFFFFFF,
+			size: 20,
+			map: THREE.ImageUtils.loadTexture(
+				"/img/arrow.png"
+			),
+			blending: THREE.AdditiveBlending,
+			transparent: true
+		}),
+		pmMaterial = new THREE.ParticleBasicMaterial({
+			color: 0xFFFFFF,
+			size: 1,
+			transparent: true
+		});
+
+    // need camera object defined
+	var envMaterial = null;
+
+
+
 	// create shader
 	var attributes = {
 	    displacement: {
@@ -133,9 +166,14 @@
 	    }
 	};
 
-
+	//==================================================================
 	// Small Helpers
+	//==================================================================
 	
+	/**
+	 * [getPixelRatio description]
+	 * @return {[type]} [description]
+	 */
 	function getPixelRatio() {
 		var canvas = document.createElement('canvas'),
 			context = canvas.getContext('2d'),
@@ -150,6 +188,10 @@
 		return ratio;
 	}
 
+	/**
+	 * [getYScrollPosition description]
+	 * @return {[type]} [description]
+	 */
 	function getYScrollPosition(){
 	    if(window.pageYOffset!= undefined){
 	        return pageYOffset;
@@ -161,17 +203,26 @@
 	    }
 	}
 
-	// Small Helpers END
 
 
+	//==================================================================
 	// Event Handlers
+	//==================================================================
 
+	/**
+	 * [onDocumentMouseMoveHandler description]
+	 * @param  {[type]} event [description]
+	 * @return {[type]}       [description]
+	 */
 	function onDocumentMouseMoveHandler (event) {
 			mouseX = ( event.clientX - HALFWIDTH );
 			mouseY = ( event.clientY - HALFHEIGTH );
 	}
 
-
+	/**
+	 * [onWindowResize description]
+	 * @return {[type]} [description]
+	 */
 	function onWindowResize() {
 
 		windowHalfX = window.innerWidth / 2;
@@ -186,6 +237,10 @@
 
 	}
 
+	/**
+	 * [onWindowScroll description]
+	 * @return {[type]} [description]
+	 */
 	function onWindowScroll () {
 		scrollPosition = getYScrollPosition();
 
@@ -194,7 +249,6 @@
 			scrollMarks.second.inView = false;
 			scrollMarks.third.inView = false;
 		}
-
 		if ( scrollPosition && scrollPosition >= scrollMarks.first.mark && scrollPosition <= scrollMarks.second.mark) {
 			scrollMarks.first.inView = false;
 			scrollMarks.second.inView = true;
@@ -208,13 +262,19 @@
 
 	}
 
-
+	/**
+	 * [bindEvents description]
+	 * @return {[type]} [description]
+	 */
 	function bindEvents () {
 		window.addEventListener('scroll', onWindowScroll, false);
 		window.addEventListener( 'resize', onWindowResize, false );
 	}
 
-
+	/**
+	 * [createLoadingScene description]
+	 * @return {[type]} [description]
+	 */
 	function createLoadingScene () {
 		var object, geometry, material, light, count = 500, range = 300;
 		var context = {
@@ -229,10 +289,12 @@
 
 	}
 
-	// Event Handler END
-
-
-
+	/**
+	 * [handle_update description]
+	 * @param  {[type]} result [description]
+	 * @param  {[type]} pieces [description]
+	 * @return {[type]}        [description]
+	 */
 	function handle_update ( result, pieces ) {
 
 		var m, material, count = 0;
@@ -263,6 +325,16 @@
 
 
 
+	//==================================================================
+	// Callbacks
+	//==================================================================
+
+	/**
+	 * [callbackProgress description]
+	 * @param  {[type]} progress [description]
+	 * @param  {[type]} result   [description]
+	 * @return {[type]}          [description]
+	 */
 	function callbackProgress ( progress, result ) {
 
 		var bar = 250,
@@ -279,7 +351,10 @@
 
 	}
 
-
+	/**
+	 * [setAllSceneObjectsFlat description]
+	 * @param {[type]} exceptArr [description]
+	 */
 	function setAllSceneObjectsFlat(exceptArr) {
 
 		var except = false;
@@ -305,6 +380,17 @@
 
 	}
 
+
+
+	//==================================================================
+	// Scene Loader
+	//==================================================================
+
+	/**
+	 * [findObjectsByNames description]
+	 * @param  {[type]} searchArr [description]
+	 * @return {[type]}           [description]
+	 */
 	function findObjectsByNames (searchArr){
 		var result = [], child;
 
@@ -322,11 +408,17 @@
 		return result;
 	}
 
+	/**
+	 * [prepareScene description]
+	 * @param  {[type]} result [description]
+	 * @return {[type]}        [description]
+	 */
 	function prepareScene (result) {
 
 		camera = result.currentCamera;
 		camera.aspect = window.innerWidth / window.innerHeight;
 		camera.updateProjectionMatrix();
+
 		scene = result.scene;
 		handle_update( result, 1 );
 		scene.fog = new THREE.Fog( 0x3C3C3C, 1, 250 );
@@ -342,49 +434,33 @@
 
 	}
 
-
-	function firstCallbackFinished ( result ) {
-
-		prepareScene(result);
-		setAllSceneObjectsFlat(flatShadingExceptions);
-
-		$.ionSound({
-		    sounds: [
-		        "computer_error",
-		        "synth_stab:0.5"        // http://www.freesound.org/people/Erokia/sounds/216059/
-		    ],
-		    path: "sounds/",            // set path to sounds
-		    multiPlay: true,            // playing only 1 sound at once
-		    volume: "0.3"               // not so loud please
-		});
-
-		$.ionSound.play("computer_error");
-
-	}
-
-
-
-	function secondCallbackFinished ( result ) {
-
-		prepareScene(result);
+	/**
+	 * [addPulsar description]
+	 */
+	function addPulsar () {
 
 		var shaderMaterial = new THREE.ShaderMaterial({
 			uniforms: 		uniforms,
 			attributes:     attributes,
 			vertexShader: document.getElementById( 'vertexshader' ).textContent,
-			fragmentShader:  document.getElementById( 'fragmentshader' ).textContent
+			fragmentShader:  document.getElementById( 'fragmentshader' ).textContent,
+			envMap: camera.renderTarget
 		});
 
-		SCENELAMPS = findObjectsByNames(['Lamp']);
 
 		// create a new mesh with sphere geometry -
 		// we will cover the sphereMaterial next!
+		
 		var sphere = new THREE.Mesh(
 		   new THREE.SphereGeometry(2,
 		   segments,
 		   rings),
 
 		   shaderMaterial);
+
+		if (envMaterial) {
+
+		} 
 
 		// changes to the vertices
 		sphere.geometry.__dirtyVertices = true;
@@ -433,22 +509,108 @@
 
 		// add the sphere to the scene
 		scene.add(pulsar);
+	}
 
 
 
-		//set flat shading
+
+	/**
+	 * [firstCallbackFinished description]
+	 * @param  {[type]} result [description]
+	 * @return {[type]}        [description]
+	 */
+	function firstCallbackFinished ( result ) {
+
+		prepareScene(result);
+
 		setAllSceneObjectsFlat(flatShadingExceptions);
+
+		$.ionSound({
+		    sounds: [
+		        "computer_error",
+		        "synth_stab:0.5"        // http://www.freesound.org/people/Erokia/sounds/216059/
+		    ],
+		    path: "sounds/",            // set path to sounds
+		    multiPlay: true,            // playing only 1 sound at once
+		    volume: "0.3"               // not so loud please
+		});
+
 		$.ionSound.play("computer_error");
 	}
 
 
+
+
+	/**
+	 * [secondCallbackFinished description]
+	 * @param  {[type]} result [description]
+	 * @return {[type]}        [description]
+	 */
+	function secondCallbackFinished ( result ) {
+
+		prepareScene(result);
+
+		SCENELAMPS = findObjectsByNames(['Lamp']);
+		SHARKS = findObjectsByNames(['Icosphere_cell']);
+		addPulsar();
+		
+		//set flat shading
+		setAllSceneObjectsFlat(flatShadingExceptions);
+
+
+		$.ionSound.play("computer_error");
+	}
+
+
+	/**
+	 * [secondCallbackFinished description]
+	 * @param  {[type]} result [description]
+	 * @return {[type]}        [description]
+	 */
+	function thirdCallbackFinished ( result ) {
+
+		prepareScene(result);
+
+		SCENELAMPS = findObjectsByNames(['Lamp']);
+		SHARKS = findObjectsByNames(['Icosphere_cell']);
+		addPulsar();
+		
+
+		//set flat shading
+		setAllSceneObjectsFlat(flatShadingExceptions);
+
+		addSharkParticleSystem();
+
+
+		$.ionSound.play("computer_error");
+	}
+
+
+
+
+
 	// mietääää
+	
+
+
+	/**
+	 * [loadFirstBlenderScene description]
+	 * @param  {[type]} path [description]
+	 * @return {[type]}      [description]
+	 */
 	function loadFirstBlenderScene ( path ) {
 		var loader = new THREE.SceneLoader();
 		loader.callbackProgress = callbackProgress;
 		loader.load( path, firstCallbackFinished);
 	}
 
+
+
+	/**
+	 * [loadSecondBlenderScene description]
+	 * @param  {[type]} path [description]
+	 * @return {[type]}      [description]
+	 */
 	function loadSecondBlenderScene ( path ) {
 		var loader = new THREE.SceneLoader();
 		loader.callbackProgress = callbackProgress;
@@ -456,13 +618,164 @@
 	}
 
 
+	/**
+	 * [loadSecondBlenderScene description]
+	 * @param  {[type]} path [description]
+	 * @return {[type]}      [description]
+	 */
+	function loadThirdBlenderScene ( path ) {
+		var loader = new THREE.SceneLoader();
+		loader.callbackProgress = callbackProgress;
+		loader.load( path, thirdCallbackFinished);
+	}
 
+
+
+	/**
+	 * [addParticleSystem description]
+	 */
+	function addParticleSystem () {
+		particleSystem = new THREE.ParticleSystem(
+				particles,
+				pMaterial);
+
+		particleSystem.sortParticles = true;
+
+		particles = new THREE.Geometry();
+
+		for(var p = 0; p < particleCount; p++) {
+			
+				// create a particle with random
+				var pX = Math.random() * 8 - 1 - Math.random() * 7,
+					pY = Math.random() * 8 - 1 - Math.random() * 7,
+					pZ = Math.random() * 8 - 1 - Math.random() * 7,
+				    particle = new THREE.Vector3(pX, pY, pZ);
+
+				// create a velocity vector
+				particle.velocity = new THREE.Vector3(
+					0,				// x
+					-Math.random(),	// y
+					0);				// z
+
+				// add it to the geometry
+				particles.vertices.push(particle);
+
+			}
+
+		scene.add(particleSystem);
+	}
+
+
+	/**
+	 * [addSharkParticleSystem description]
+	 */
+	function addSharkParticleSystem () {
+		if (!SHARKS || SHARKS.length < 1)
+			return;
+
+
+		particleSystem = new THREE.ParticleSystem(
+				particles,
+				pMaterial);
+
+		scene.add( new THREE.BoxHelper( particleSystem) );
+		scene.add( new THREE.FaceNormalsHelper( particleSystem) );
+		scene.add( new THREE.VertexNormalsHelper( particleSystem) );
+		scene.add( new THREE.WireframeHelper( particleSystem) );﻿
+
+		particleSystem.sortParticles = true;
+
+		particles = new THREE.Geometry();
+
+		for(var p = 0; p < particleCount; p++) {
+			
+/*				var pX = SHARKS[p].position.x,
+					pY = SHARKS[p].position.y,
+					pZ = SHARKS[p].position.z,
+				    particle = new THREE.Vector3(pX, pY, pZ);*/
+
+			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
+			    	pY = Math.random() * 20 - 1 - Math.random() * 20,
+			    	pZ = Math.random() * 20 - 1 - Math.random() * 20,
+			        particle = new THREE.Vector3(pX, pY, pZ);
+				
+				particleSystem.add(SHARKS[p]);
+
+				// create a velocity vector
+				particle.velocity = new THREE.Vector3(
+					0,				// x
+					-Math.random(),	// y
+					0);				// z
+
+				// add it to the geometry
+				particles.vertices.push(particle);
+
+			}
+
+		scene.add(particleSystem);
+	}
+
+
+
+	/**
+	 * [particleUpdate description]
+	 * @return {[type]} [description]
+	 */
+	function particleUpdate () {
+		if(!particleSystem)
+			return;
+
+
+		particleSystem.rotation.y += 0.0015;
+
+		var pCount = particleCount;
+		while (pCount--) {
+
+		    // get the particle
+		    var particle = particles.vertices[pCount];
+
+		    // check if we need to reset
+		    if (particle.z < -6) {
+		      particle.z = 6;
+		      //particle.velocity.y = 0;
+		    }
+
+		    //particle.x = particle.x * Math.PI;
+		    //particle.y = particle.x * Math.PI;
+		    //particle.z = particle.x * Math.PI;
+
+		    // update the velocity with
+		    // a splat of randomniz
+		    //particle.velocity.y -= Math.random() * .1;
+
+		    // and the position
+		   	//particle.y *= particle.velocity;
+
+		    if (SHARKS.length > 0){
+		    	SHARKS[pCount].position = new THREE.Vector3(particle.x, particle.y, particle.z);
+		    }
+		    
+		  }
+
+		  // flag to the particle system
+	      // that we've changed its vertices.
+	      particleSystem.geometry.__dirtyVertices = true;
+	}
+
+
+	/**
+	 * [render description]
+	 * @param  {[type]} time [description]
+	 * @return {[type]}      [description]
+	 */
 	function render(time) {
 
 		// update the amplitude based on
 		// the frame value
 		uniforms.amplitude.value = Math.sin(time*0.0006) * 0.009;
 		frame += 0.1;
+
+		particleUpdate();
 
 		//camera.position.x += ( mouseX - camera.position.x ) * .001;
 		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
@@ -472,18 +785,19 @@
 			scrollMarks.first.triggerd = true;
 			scrollMarks.second.triggerd = false;
 			scrollMarks.third.triggerd = false;
-		} else if (scrollMarks && scrollMarks.second.inView && !scrollMarks.second.triggerd) {
-			rotSpeed = 0.0014;
-			loadSecondBlenderScene('scene/scene2.js');
-			scrollMarks.first.triggerd = false;
-			scrollMarks.second.triggerd = true;
-			scrollMarks.third.triggerd = false;
-		} else if (scrollMarks && scrollMarks.third.inView && !scrollMarks.third.triggerd) {
-			rotSpeed = 0.0034;
-			scrollMarks.first.triggerd = false;
-			scrollMarks.second.triggerd = false;
-			scrollMarks.third.triggerd = true;
-		}
+			} else if (scrollMarks && scrollMarks.second.inView && !scrollMarks.second.triggerd) {
+				rotSpeed = 0.0014;
+				loadSecondBlenderScene('scene/scene2.js');
+				scrollMarks.first.triggerd = false;
+				scrollMarks.second.triggerd = true;
+				scrollMarks.third.triggerd = false;
+			} else if (scrollMarks && scrollMarks.third.inView && !scrollMarks.third.triggerd) {
+				rotSpeed = 0.0028;
+				loadThirdBlenderScene('scene/scene2.js');
+				scrollMarks.first.triggerd = false;
+				scrollMarks.second.triggerd = false;
+				scrollMarks.third.triggerd = true;
+			}
 
 		if (scene.children.length > -1) {
 
@@ -538,6 +852,11 @@
 
 
 
+
+	/**
+	 * [pick description]
+	 * @return {[type]} [description]
+	 */
 	function pick() {
 
 		var vector = new THREE.Vector3( mouseX, mouseY, 1 );
@@ -576,6 +895,12 @@
 
 
 
+
+	/**
+	 * [animate description]
+	 * @param  {[type]} time [description]
+	 * @return {[type]}      [description]
+	 */
 	function animate(time) {
 		requestAnimationFrame( animate );
 
@@ -589,7 +914,10 @@
 
 
 
-
+	/**
+	 * [init description]
+	 * @return {[type]} [description]
+	 */
 	function init () {
 		// Globals
 		container = document.getElementById('threeBackground');
@@ -602,6 +930,8 @@
 
 		scene = loadScene.scene;
 		camera = loadScene.camera;
+
+		envMaterial = new THREE.MeshBasicMaterial( { envMap: camera.renderTarget } );
 
 		renderer = new THREE.WebGLRenderer({ antialiasing: true });
 		renderer.setSize(WIDTH * ratio, HEIGHT * ratio);
