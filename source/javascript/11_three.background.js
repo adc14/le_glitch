@@ -174,7 +174,7 @@
 	 * [getPixelRatio description]
 	 * @return {[type]} [description]
 	 */
-	function getPixelRatio() {
+	function getPixelRatio () {
 		var canvas = document.createElement('canvas'),
 			context = canvas.getContext('2d'),
 			devicePixelRatio = window.devicePixelRatio || 1,
@@ -192,7 +192,7 @@
 	 * [getYScrollPosition description]
 	 * @return {[type]} [description]
 	 */
-	function getYScrollPosition(){
+	function getYScrollPosition (){
 	    if(window.pageYOffset!= undefined){
 	        return pageYOffset;
 	    } else {
@@ -203,7 +203,9 @@
 	    }
 	}
 
-
+	function getRandom (min, max){
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 	//==================================================================
 	// Event Handlers
