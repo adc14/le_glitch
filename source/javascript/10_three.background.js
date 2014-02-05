@@ -1,3 +1,9 @@
+// Inspired by threejs examples.
+// Used for le_glitch project.
+// 
+// @author: Valeri Kremer
+// @twitter: @krevativ
+
 (function () {
 
 
@@ -70,7 +76,27 @@
 		rotationExceptions = ['Floor', 'Glitch'],
 		SCENELAMPS = [],
 		pulsar = null,
-		pulsarRadius = 0.5;
+		pulsarRadius = 0.5
+		scrollPosition = 0,
+		segmentHeight = window.innerHeight;
+		scrollMarks = {
+			first : {
+				mark : segmentHeight * 1,
+				inView : false,
+				triggerd : false
+			},
+			second : {
+				mark : segmentHeight * 2,
+				inView : false,
+				triggerd : false
+			},
+			third : {
+				mark : segmentHeight * 3,
+				inView : false,
+				triggerd : false
+			}
+		},
+		rotSpeed = 0.0008;
 
 	var mouse = new THREE.Vector2(),
 		offset = new THREE.Vector3( 10, 10, 10 ),
@@ -138,15 +164,12 @@
 	// Small Helpers END
 
 
-
+	// Event Handlers
 
 	function onDocumentMouseMoveHandler (event) {
 			mouseX = ( event.clientX - HALFWIDTH );
 			mouseY = ( event.clientY - HALFHEIGTH );
 	}
-
-
-
 
 
 	function onWindowResize() {
@@ -159,10 +182,37 @@
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
 
+		segmentHeight = window.innerHeight;
+
+	}
+
+	function onWindowScroll () {
+		scrollPosition = getYScrollPosition();
+
+		if ( scrollPosition && scrollPosition <= scrollMarks.first.mark) {
+			scrollMarks.first.inView = true;
+			scrollMarks.second.inView = false;
+			scrollMarks.third.inView = false;
+		}
+
+		if ( scrollPosition && scrollPosition >= scrollMarks.first.mark && scrollPosition <= scrollMarks.second.mark) {
+			scrollMarks.first.inView = false;
+			scrollMarks.second.inView = true;
+			scrollMarks.third.inView = false;
+		}
+		if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
+			scrollMarks.first.inView = false;
+			scrollMarks.second.inView = false;
+			scrollMarks.third.inView = true;
+		}
+
 	}
 
 
-
+	function bindEvents () {
+		window.addEventListener('scroll', onWindowScroll, false);
+		window.addEventListener( 'resize', onWindowResize, false );
+	}
 
 
 	function createLoadingScene () {
@@ -179,7 +229,7 @@
 
 	}
 
-
+	// Event Handler END
 
 
 
@@ -416,13 +466,31 @@
 
 		//camera.position.x += ( mouseX - camera.position.x ) * .001;
 		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
+		if (scrollMarks && scrollMarks.first.inView && !scrollMarks.first.triggerd) {
+			rotSpeed = 0.0008;
+			loadFirstBlenderScene('scene/scene1.js');
+			scrollMarks.first.triggerd = true;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = false;
+		} else if (scrollMarks && scrollMarks.second.inView && !scrollMarks.second.triggerd) {
+			rotSpeed = 0.0014;
+			loadSecondBlenderScene('scene/scene2.js');
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = true;
+			scrollMarks.third.triggerd = false;
+		} else if (scrollMarks && scrollMarks.third.inView && !scrollMarks.third.triggerd) {
+			rotSpeed = 0.0034;
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = true;
+		}
 
 		if (scene.children.length > -1) {
 
 			for (var i=0; i < scene.children.length; i++) {
 				if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
 					sceneObject = scene.children[i];
-					sceneObject.rotation.z += 0.0008;
+					sceneObject.rotation.z += rotSpeed;
 				}
 			}
 
@@ -508,9 +576,6 @@
 
 
 
-
-
-
 	function animate(time) {
 		requestAnimationFrame( animate );
 
@@ -531,7 +596,7 @@
 
 		// Events
 		document.addEventListener( 'mousemove', onDocumentMouseMoveHandler, false );
-		window.addEventListener( 'resize', onWindowResize, false );
+		bindEvents();
 
 		var loadScene = createLoadingScene();
 
@@ -552,9 +617,9 @@
 		container.appendChild(renderer.domElement);
 
 		loadFirstBlenderScene('scene/scene1.js');
-		setTimeout(function () {
+/*		setTimeout(function () {
 			loadSecondBlenderScene('scene/scene2.js');
-		}, 5000);
+		}, 5000);*/
 
 
 		animate();
