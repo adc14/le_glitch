@@ -684,17 +684,35 @@
 
 		for(var p = 0; p < particleCount; p++) {
 			
-/*				var pX = SHARKS[p].position.x,
+				var pX = SHARKS[p].position.x,
 					pY = SHARKS[p].position.y,
 					pZ = SHARKS[p].position.z,
-				    particle = new THREE.Vector3(pX, pY, pZ);*/
+				    particle = new THREE.Vector3(pX, pY, pZ);
 
-			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
+	/*			var theta = Math.random()*2*Math.PI;
+		    	var phi = Math.acos(Math.random()*2-1);
+		    	var pX = 2*Math.sin(phi)*Math.cos(theta);
+		    	var pY = 2*Math.sin(phi)*Math.sin(theta);
+		    	var pZ = 2*Math.cos(phi);*/
+
+/*			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
 			    	pY = Math.random() * 20 - 1 - Math.random() * 20,
-			    	pZ = Math.random() * 20 - 1 - Math.random() * 20,
-			        particle = new THREE.Vector3(pX, pY, pZ);
-				
+			    	pZ = Math.random() * 20 - 1 - Math.random() * 20;*/
+			        
+				var particle = new THREE.Vector3(pX, pY, pZ);
+
 				particleSystem.add(SHARKS[p]);
+
+				new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[p] } )
+				.to( { 
+						x : pX + Math.random() * 10,
+						y : pY + Math.random() * 10,
+						z : pZ + Math.random() * 10
+					 }, 4000 )
+				.easing( TWEEN.Easing.Quadratic.InOut )
+				.onUpdate(function() {
+					this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
+				}).start();
 
 				// create a velocity vector
 				particle.velocity = new THREE.Vector3(
@@ -718,7 +736,7 @@
 	 */
 	function particleUpdate () {
 		if(!particleSystem)
-			return;
+		return;
 
 
 		particleSystem.rotation.y += 0.0015;
@@ -726,35 +744,35 @@
 		var pCount = particleCount;
 		while (pCount--) {
 
-		    // get the particle
-		    var particle = particles.vertices[pCount];
+			// get the particle
+			var particle = particles.vertices[pCount];
 
-		    // check if we need to reset
-		    if (particle.z < -6) {
-		      particle.z = 6;
-		      //particle.velocity.y = 0;
-		    }
+			// check if we need to reset
+			if (particle.z < -6) {
+					particle.z = 6;
+					//particle.velocity.y = 0;
+				}
 
-		    //particle.x = particle.x * Math.PI;
-		    //particle.y = particle.x * Math.PI;
-		    //particle.z = particle.x * Math.PI;
+			//particle.x = particle.x * Math.PI;
+			//particle.y = particle.x * Math.PI;
+			//particle.z = particle.x * Math.PI;
 
-		    // update the velocity with
-		    // a splat of randomniz
-		    //particle.velocity.y -= Math.random() * .1;
+			// update the velocity with
+			// a splat of randomniz
+			//particle.velocity.y -= Math.random() * .1;
 
-		    // and the position
-		   	//particle.y *= particle.velocity;
+			// and the position
+			//particle.y *= particle.velocity;
 
-		    if (SHARKS.length > 0){
-		    	SHARKS[pCount].position = new THREE.Vector3(particle.x, particle.y, particle.z);
-		    }
-		    
-		  }
+			if (SHARKS.length > 0){
+					SHARKS[pCount].position = new THREE.Vector3(particle.x, particle.y, particle.z);
+				}
 
-		  // flag to the particle system
-	      // that we've changed its vertices.
-	      particleSystem.geometry.__dirtyVertices = true;
+		}
+
+			// flag to the particle system
+			// that we've changed its vertices.
+			particleSystem.geometry.__dirtyVertices = true;
 	}
 
 
@@ -837,7 +855,7 @@
 			}
 
 		}
-
+		TWEEN.update();
 		camera.lookAt( scene.position );
 		composer.render(scene, camera);
 		//renderer.render(scene, camera);
@@ -955,7 +973,14 @@
 
 	//start if webgl supported
 	if ( Modernizr.webgl ){
-		window.onload = function () { init(); };
+		window.onload = function () {
+			var loader = new THREE.SceneLoader();
+			loader.load( 'scene/scene1.js', function () {
+				loader.load( 'scene/scene2.js', function () {
+					init();
+				});
+			});
+		};
 	}
 
 
