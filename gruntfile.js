@@ -18,6 +18,8 @@ module.exports = function(grunt){
         SOUNDS_BUILD = 'build/sounds/',
         SCENE_SOURCE = 'source/scene/',
         SCENE_BUILD = 'build/scene/',
+        THEDAY_SOURCE = 'source/thedaywefightback/',
+        THEDAY_Build = 'build/thedaywefightback/',
         PDF_BUILD = 'build/pdf/';
 
     "use strict";
@@ -220,6 +222,16 @@ module.exports = function(grunt){
                         expand: true
                     }
                 ]
+            },
+            theday: {
+                files: [
+                    {
+                        cwd: THEDAY_SOURCE,
+                        src: '**',
+                        dest: THEDAY_Build,
+                        expand: true
+                    }
+                ]
             }
         },
 
@@ -269,7 +281,7 @@ module.exports = function(grunt){
     // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildjs',  ['concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);
-    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf', 'copy:sounds', 'copy:scene']);
+    grunt.registerTask('buildassets',  ['copy:img','copy:fonts','copy:pdf', 'copy:sounds', 'copy:scene', 'copy:theday']);
 
 
 };
