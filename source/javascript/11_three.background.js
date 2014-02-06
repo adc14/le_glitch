@@ -145,9 +145,6 @@
 			transparent: true
 		});
 
-    // need camera object defined
-	var envMaterial = null;
-
 
 
 	// create shader
@@ -445,8 +442,7 @@
 			uniforms: 		uniforms,
 			attributes:     attributes,
 			vertexShader: document.getElementById( 'vertexshader' ).textContent,
-			fragmentShader:  document.getElementById( 'fragmentshader' ).textContent,
-			envMap: camera.renderTarget
+			fragmentShader:  document.getElementById( 'fragmentshader' ).textContent
 		});
 
 
@@ -460,9 +456,6 @@
 
 		   shaderMaterial);
 
-		if (envMaterial) {
-
-		} 
 
 		// changes to the vertices
 		sphere.geometry.__dirtyVertices = true;
@@ -932,8 +925,6 @@
 
 		scene = loadScene.scene;
 		camera = loadScene.camera;
-
-		envMaterial = new THREE.MeshBasicMaterial( { envMap: camera.renderTarget } );
 
 		renderer = new THREE.WebGLRenderer({ antialiasing: true });
 		renderer.setSize(WIDTH * ratio, HEIGHT * ratio);
