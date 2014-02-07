@@ -24,3 +24,14 @@ h3, .gamma   {
 	width: 100%;
 	height: auto;
 }
+
+.preloaderContainer {
+	position: fixed;
+	top: 36px;
+	left: 36px;
+	width: 256px;
+	height: 256px;
+	-webkit-transform: translate3d(0,0,0);
+	-moz-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}

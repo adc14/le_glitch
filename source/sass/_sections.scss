@@ -6,11 +6,14 @@
 
 .home .arrow {
 	position: fixed;
-	left: 50%;
+	left: 49%;
 	bottom: 4%;
 	width: 10%;
 	height: auto;
 	cursor: pointer;
+	-webkit-transform: translate3d(0,0,0);
+	-moz-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
 	@include breakpoint(baby-bear) {
 		width: 5%;
 	}

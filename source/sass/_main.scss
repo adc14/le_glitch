@@ -6,7 +6,17 @@ html {
 
 body {
 	margin: 0;
-    background: $page-background-color;
+
+    background: url(/img/clear_bg.png) no-repeat center center fixed;
+
+    -webkit-background-size: cover;
+
+    -moz-background-size: cover;
+
+    -o-background-size: cover;
+
+    background-size: cover;
+
     font: 100%/1.5 $font;
     -webkit-text-size-adjust: 100%;
     color: $text-color;

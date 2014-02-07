@@ -59,6 +59,7 @@
 		HALFHEIGTH = HEIGHT / 2,
 		VIEW_ANGLE = 60,
 	    ASPECT = WIDTH / HEIGHT,
+	    animationRequestID = undefined,
 		container = null,
 		mouseX = 0,
 		mouseY = 0,
@@ -530,6 +531,12 @@
 		    volume: "0.3"               // not so loud please
 		});
 
+/*		var invisible = findObjectsByNames(['Icosphere']);
+
+		for (var i = 0; i < invisible.length; i++) {
+			invisible[i].visible = false;
+		}
+*/
 		$.ionSound.play("computer_error");
 	}
 
@@ -921,7 +928,10 @@
 
 	}
 
-
+	function animatePreloader () {
+		animationRequestID = requestAnimationFrame( animatePreloader );
+		TWEEN.update();
+	}
 
 
 
@@ -962,25 +972,101 @@
 			loadSecondBlenderScene('scene/scene2.js');
 		}, 5000);*/
 
-
+		cancelAnimationFrame(animationRequestID);
+		animationRequestID = undefined;
 		animate();
 
 	}
 
 
 
-
-
 	//start if webgl supported
 	if ( Modernizr.webgl ){
-		window.onload = function () {
-			var loader = new THREE.SceneLoader();
-			loader.load( 'scene/scene1.js', function () {
-				loader.load( 'scene/scene2.js', function () {
-					init();
+
+		
+		$(document).ready(function($) {
+
+			$('.home .arrow').fadeOut( "fast" );
+			document.body.style.overflow = "hidden";
+
+			var loader = new THREE.SceneLoader(),
+				canvas = document.getElementById('preloader'),
+				ctx = canvas.getContext("2d"),
+				margin = { all : 10 }
+				pWidth = 88,
+				pHeight = 88,
+				pWidthHalf = (pWidth / 2),
+				pHeightHalf = (pHeight / 2);
+
+			canvas.width = pWidth;
+			canvas.height = pHeight;
+			animatePreloader();
+
+			new TWEEN.Tween( { progress : 0, loader : loader } )
+			.to( { progress : 0.5 }, 1000 )
+			.easing( TWEEN.Easing.Quadratic.InOut )
+			.onUpdate(function() {
+				ctx.beginPath();
+				ctx.clearRect(0, 0, pWidth, pHeight);
+				ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+				ctx.lineWidth=5;
+				ctx.strokeStyle="#DADADA";
+				ctx.stroke();
+				ctx.fillStyle = "#DADADA";
+				ctx.textAlign = "center";
+			    ctx.font = "bold 12pt Arial";
+			    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
+				ctx.save();
+			}).onComplete(function () {
+				loader.load( 'scene/scene1.js', function () {
+
+					new TWEEN.Tween( { progress : 1, loader : loader } )
+					.to( { progress : 1.5 }, 5000 )
+					.easing( TWEEN.Easing.Quadratic.InOut )
+					.onUpdate(function() {
+						ctx.beginPath();
+						ctx.clearRect(0, 0, pWidth, pHeight);
+						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+						ctx.lineWidth=5;
+						ctx.strokeStyle="#DADADA";
+						ctx.stroke();
+						ctx.fillStyle = "#DADADA";
+					    ctx.font = "bold 12pt Arial";
+					    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
+						ctx.save();
+					}).onComplete(function () {
+						loader.load( 'scene/scene2.js', function () {
+
+							new TWEEN.Tween( { progress : 1.5, loader : loader } )
+							.to( { progress : 2 }, 500 )
+							.easing( TWEEN.Easing.Quadratic.InOut )
+							.onUpdate(function() {
+								ctx.beginPath();
+								ctx.clearRect(0, 0, pWidth, pHeight);
+								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+								ctx.lineWidth=5;
+								ctx.strokeStyle="#DADADA";
+								ctx.stroke();
+								ctx.fillStyle = "#DADADA";
+							    ctx.font = "bold 12pt Arial";
+							    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
+								ctx.save();
+							}).start();
+
+							init();
+							document.body.style.overflow = "";
+							$('.preloaderContainer').fadeOut( "slow" );
+							$('.home .arrow').fadeIn( "slow" );
+						});
+					}).start();
+
 				});
-			});
-		};
+			}).start();
+
+
+
+		});
+
 	}
 
 

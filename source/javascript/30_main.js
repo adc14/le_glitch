@@ -46,8 +46,6 @@ $(document).ready(function($) {
 	// 	});
 	// }, true);
 
-	var sections = null, canvas = $('canvas', sections)[0],  ctx, i, x, elemTop, elemBottom, inView, docViewTop, docViewBottom;
-
 /*	function animate(time) {
 		requestAnimationFrame( animate );
 		if (canvas) {
@@ -77,32 +75,6 @@ $(document).ready(function($) {
 
 	// window.addEventListener('scroll', function () {
 
-	// 	docViewTop = $(window).scrollTop();
-	// 	docViewBottom = docViewTop + $(window).height();
-
-	// 	if(sections){
-	// 		for (i = 0; i < sections.length; i++) {
-
-	// 			elemTop = $(sections[i]).offset().top;
-	// 			elemBottom = elemTop + $(sections[i]).height();
-	// 			inView = (elemTop >= docViewBottom - $(sections[i]).height());
-
-	// 			$(sections[i]).removeClass('active');
-
-	// 			if (inView) {
-	// 				$(sections[i]).addClass('active');
-	// 				activeSectionHandler(sections[i]);
-	// 			}
-	// 		};
-	// 	}
-
-	// 	$('article section').each(function () {
-	// 		if ($(window).scrollTop() < 50) {
-	// 			$('.arrow').css('opacity', 1.0 );
-	// 		} else {
-	// 			$('.arrow').css('opacity', 1.0 - ($(window).scrollTop() - 50) / 100 );
-	// 		}
-	// 	});
 	// }, false);
 
 	//
@@ -125,9 +97,6 @@ $(document).ready(function($) {
 	   event = event || window.event;
 	   return event.keyCode;
 	}
-
-
-	sections = $('article section').toArray()
 
 	// customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
 
