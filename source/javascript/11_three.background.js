@@ -1009,14 +1009,13 @@
 				ctx.beginPath();
 				ctx.clearRect(0, 0, pWidth, pHeight);
 				ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-				ctx.lineWidth=5;
+				ctx.lineWidth=3;
 				ctx.strokeStyle="#DADADA";
 				ctx.stroke();
 				ctx.fillStyle = "#DADADA";
 				ctx.textAlign = "center";
 			    ctx.font = "bold 12pt Arial";
 			    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
-				ctx.save();
 			}).onComplete(function () {
 				loader.load( 'scene/scene1.js', function () {
 
@@ -1027,13 +1026,10 @@
 						ctx.beginPath();
 						ctx.clearRect(0, 0, pWidth, pHeight);
 						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-						ctx.lineWidth=5;
-						ctx.strokeStyle="#DADADA";
 						ctx.stroke();
 						ctx.fillStyle = "#DADADA";
 					    ctx.font = "bold 12pt Arial";
 					    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
-						ctx.save();
 					}).onComplete(function () {
 						loader.load( 'scene/scene2.js', function () {
 
@@ -1044,13 +1040,10 @@
 								ctx.beginPath();
 								ctx.clearRect(0, 0, pWidth, pHeight);
 								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-								ctx.lineWidth=5;
-								ctx.strokeStyle="#DADADA";
 								ctx.stroke();
 								ctx.fillStyle = "#DADADA";
 							    ctx.font = "bold 12pt Arial";
 							    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
-								ctx.save();
 							}).start();
 
 							init();

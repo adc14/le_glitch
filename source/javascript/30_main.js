@@ -163,6 +163,14 @@ $(document).ready(function($) {
           				 	p.innerHTML = 'Tipp: Try Marco';
           	              	break;
 
+          	case "developer": 	$(aside).addClass('success');
+	          				 	p.innerHTML = 'Marius Bruns, Florenz Helderman, Valeri Kremer, Matthias Bauer';
+	          	              	break;
+
+          	case "thx": 	$(aside).addClass('success');
+	          				 	p.innerHTML = 'sass, three.js, tween.js, Ion.Sound';
+	          	              	break;
+
 			default: 		$(aside).addClass('error');
 							p.innerHTML = 'command not found : ' + text;
 		}
