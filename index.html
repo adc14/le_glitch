@@ -14,11 +14,13 @@
         <meta property="og:description" content="Some superduper dudes talkin' bout super cool stuff. nobody understands.">
         <link href="http://fonts.googleapis.com/css?family=Roboto:400,100,300" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="css/style.css">
-
     </head>
     <body class="main" itemscope itemtype="http://schema.org/Event">
         <div id="threeBackground"></div>
         <blink>
+            <div class="preloaderContainer">
+                <canvas id="preloader"></canvas>
+            </div>
             <span id="deadPixel">is it me you're looking for?</span>
             <article>
                 <section class="home fullscreen">
@@ -106,10 +108,10 @@
                         </aside>
                         <aside>
                             <h3>Kontakt</h3>
-                            <p><!-- XXX TODO -->
-                                <a href="" title="">twitter</a>
-                                <a href="" title="">facebook</a>
-                                <a href="" title="">email</a>
+                            <p>
+                                <a href="" title=""> twitter </a>
+                                <a href="" title=""> facebook </a>
+                                <a href="" title=""> email </a>
                             </p>
                         </aside>
                         <aside>
@@ -132,7 +134,10 @@
             </footer>
             </article>
         </blink>
+
+        <!--[if !(lte IE 8)]><!--> 
         <script type="text/javascript" src="javascript/main.js"></script>
+
 
         <script type="x-shader/x-vertex" id="vertexshader">
 
@@ -186,6 +191,6 @@
             }
 
         </script>
-
+        <!--<![endif]-->
     </body>
 </html>
