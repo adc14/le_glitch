@@ -1810,11 +1810,11 @@ THREE.ShaderPass.prototype = {
 			scrollMarks.second.inView = true;
 			scrollMarks.third.inView = false;
 		}
-		if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
-			scrollMarks.first.inView = false;
-			scrollMarks.second.inView = false;
-			scrollMarks.third.inView = true;
-		}
+		// if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
+		// 	scrollMarks.first.inView = false;
+		// 	scrollMarks.second.inView = false;
+		// 	scrollMarks.third.inView = true;
+		// }
 
 	}
 
@@ -2543,7 +2543,7 @@ THREE.ShaderPass.prototype = {
 		$(document).ready(function($) {
 
 			$('.home .arrow').fadeOut( "fast" );
-			document.body.style.overflow = "hidden";
+			// document.body.style.overflow = "hidden";
 
 			var loader = new THREE.SceneLoader(),
 				canvas = document.getElementById('preloader'),
@@ -2569,9 +2569,6 @@ THREE.ShaderPass.prototype = {
 				ctx.strokeStyle="#DADADA";
 				ctx.stroke();
 				ctx.fillStyle = "#DADADA";
-				ctx.textAlign = "center";
-			    ctx.font = "bold 12pt Arial";
-			    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 			}).onComplete(function () {
 				loader.load( 'scene/scene1.js', function () {
 
@@ -2584,8 +2581,6 @@ THREE.ShaderPass.prototype = {
 						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
 						ctx.stroke();
 						ctx.fillStyle = "#DADADA";
-					    ctx.font = "bold 12pt Arial";
-					    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 					}).onComplete(function () {
 						loader.load( 'scene/scene2.js', function () {
 
@@ -2598,8 +2593,6 @@ THREE.ShaderPass.prototype = {
 								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
 								ctx.stroke();
 								ctx.fillStyle = "#DADADA";
-							    ctx.font = "bold 12pt Arial";
-							    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 							}).start();
 
 							init();
@@ -2788,19 +2781,19 @@ $(document).ready(function($) {
 
 	animate();*/
 
-	function activeSectionHandler (section) {
-		canvas  = $('canvas', section)[0];
+	// function activeSectionHandler (section) {
+	// 	canvas  = $('canvas', section)[0];
 
-		if (canvas){
-			if ($(canvas).hasClass('pixelLine')) {
+	// 	if (canvas){
+	// 		if ($(canvas).hasClass('pixelLine')) {
 
-				canvas.style.width = window.innerWidth + 'px';
-				canvas.style.maxHeight = canvas.height + 'px';
+	// 			canvas.style.width = window.innerWidth + 'px';
+	// 			canvas.style.maxHeight = canvas.height + 'px';
 
 
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// }
 
 	// window.addEventListener('scroll', function () {
 
