@@ -59,19 +59,19 @@ $(document).ready(function($) {
 
 	animate();*/
 
-	function activeSectionHandler (section) {
-		canvas  = $('canvas', section)[0];
+	// function activeSectionHandler (section) {
+	// 	canvas  = $('canvas', section)[0];
 
-		if (canvas){
-			if ($(canvas).hasClass('pixelLine')) {
+	// 	if (canvas){
+	// 		if ($(canvas).hasClass('pixelLine')) {
 
-				canvas.style.width = window.innerWidth + 'px';
-				canvas.style.maxHeight = canvas.height + 'px';
+	// 			canvas.style.width = window.innerWidth + 'px';
+	// 			canvas.style.maxHeight = canvas.height + 'px';
 
 
-			}
-		}
-	}
+	// 		}
+	// 	}
+	// }
 
 	// window.addEventListener('scroll', function () {
 

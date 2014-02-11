@@ -987,7 +987,7 @@
 		$(document).ready(function($) {
 
 			$('.home .arrow').fadeOut( "fast" );
-			document.body.style.overflow = "hidden";
+			// document.body.style.overflow = "hidden";
 
 			var loader = new THREE.SceneLoader(),
 				canvas = document.getElementById('preloader'),
