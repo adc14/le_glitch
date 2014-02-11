@@ -254,11 +254,11 @@
 			scrollMarks.second.inView = true;
 			scrollMarks.third.inView = false;
 		}
-		if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
-			scrollMarks.first.inView = false;
-			scrollMarks.second.inView = false;
-			scrollMarks.third.inView = true;
-		}
+		// if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
+		// 	scrollMarks.first.inView = false;
+		// 	scrollMarks.second.inView = false;
+		// 	scrollMarks.third.inView = true;
+		// }
 
 	}
 
@@ -1013,9 +1013,6 @@
 				ctx.strokeStyle="#DADADA";
 				ctx.stroke();
 				ctx.fillStyle = "#DADADA";
-				ctx.textAlign = "center";
-			    ctx.font = "bold 12pt Arial";
-			    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 			}).onComplete(function () {
 				loader.load( 'scene/scene1.js', function () {
 
@@ -1028,8 +1025,6 @@
 						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
 						ctx.stroke();
 						ctx.fillStyle = "#DADADA";
-					    ctx.font = "bold 12pt Arial";
-					    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 					}).onComplete(function () {
 						loader.load( 'scene/scene2.js', function () {
 
@@ -1042,8 +1037,6 @@
 								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
 								ctx.stroke();
 								ctx.fillStyle = "#DADADA";
-							    ctx.font = "bold 12pt Arial";
-							    ctx.fillText(Math.floor(this.progress * 50), pWidthHalf, 50);
 							}).start();
 
 							init();

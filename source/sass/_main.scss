@@ -1,22 +1,10 @@
-html {
-    font-family: sans-serif; /* 1 */
-    -ms-text-size-adjust: 100%; /* 2 */
-    -webkit-text-size-adjust: 100%; /* 2 */
-}
-
 body {
 	margin: 0;
-
     background: url(/img/clear_bg.png) no-repeat center center fixed;
-
     -webkit-background-size: cover;
-
     -moz-background-size: cover;
-
     -o-background-size: cover;
-
     background-size: cover;
-
     font: 100%/1.5 $font;
     -webkit-text-size-adjust: 100%;
     color: $text-color;
@@ -29,7 +17,7 @@ html, body, article {
 article {
     box-sizing: border-box;
     width: $full;
-    padding: 0 8%;
+    padding: 0;
     @include breakpoint(baby-bear) {
         padding: 0;
     }

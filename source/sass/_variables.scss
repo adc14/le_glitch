@@ -12,14 +12,7 @@ $page-background-color: $dark-grey;
 $text-color: $bright-grey;
 $link-color: $bright-blue;
 
-@font-face {
-   font-family: FireMono;
-    src: url(/fonts/Fira_Sans_SC_EOT/FiraSansSC-Light.eot);
-    src: url(/fonts/Fira_Sans_SC_EOT/FiraSansSC-Light.eot?#iefix) format(embedded-opentype),
-         url(/fonts/Fira_Sans_SC_WOFF/FiraSansSC-Light.woff) format(woff)
-}
-
-$font : "FireMono", "Courier New", Courier, monospace;
+$font : "Courier New", Courier, monospace;
 $font-secondary : Georgia, Times, "Times New Roman", serif;
 
 $font-size-norm : 1em;
