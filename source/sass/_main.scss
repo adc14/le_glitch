@@ -10,13 +10,15 @@ body {
     color: $text-color;
 }
 
-html, body, article {
+html, body {
+    width: $full;
     height: $full;
 }
 
 article {
     box-sizing: border-box;
     width: $full;
+    height: $full;
     padding: 0;
     @include breakpoint(baby-bear) {
         padding: 0;

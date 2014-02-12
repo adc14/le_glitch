@@ -40,42 +40,6 @@ $(document).ready(function($) {
 
 	randomDeadPixel();
 
-	// window.addEventListener('resize', function () {
-	// 	$('article section').each(function () {
-	// 		this.style.height = window.innerHeight + 'px';
-	// 	});
-	// }, true);
-
-/*	function animate(time) {
-		requestAnimationFrame( animate );
-		if (canvas) {
-			ctx = canvas.getContext('2d');
-			ctx.fillStyle = '#DADADA';
-			ctx.clearRect(0,0, 50, 3);
-			ctx.rect(0,0, 50, 3);
-			ctx.fill();
-		}
-	}
-
-	animate();*/
-
-	// function activeSectionHandler (section) {
-	// 	canvas  = $('canvas', section)[0];
-
-	// 	if (canvas){
-	// 		if ($(canvas).hasClass('pixelLine')) {
-
-	// 			canvas.style.width = window.innerWidth + 'px';
-	// 			canvas.style.maxHeight = canvas.height + 'px';
-
-
-	// 		}
-	// 	}
-	// }
-
-	// window.addEventListener('scroll', function () {
-
-	// }, false);
 
 	//
 	// Imageglitch
@@ -98,11 +62,6 @@ $(document).ready(function($) {
 	   return event.keyCode;
 	}
 
-	// customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
-
-	// $('article section').each(function () {
-	// 	this.style.height = window.innerHeight + 'px';
-	// });
 	var lastText;
 
 	$( "#inputForm" ).on( "keydown", function( event ) {

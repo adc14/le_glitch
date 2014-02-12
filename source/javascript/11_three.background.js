@@ -87,21 +87,19 @@
 		pulsarRadius = 0.5,
 		particleSystem = null,
 		scrollPosition = 0,
-		segmentHeight = window.innerHeight;
+		segmentHeight = window.innerHeight,
+		inViewSectionNumber = 0,
 		scrollMarks = {
 			first : {
 				mark : segmentHeight * 1,
-				inView : false,
 				triggerd : false
 			},
 			second : {
 				mark : segmentHeight * 2,
-				inView : false,
 				triggerd : false
 			},
 			third : {
 				mark : segmentHeight * 3,
-				inView : false,
 				triggerd : false
 			}
 		},
@@ -138,12 +136,13 @@
 				"/img/arrow.png"
 			),
 			blending: THREE.AdditiveBlending,
-			transparent: true
+			transparent: false
 		}),
 		pmMaterial = new THREE.ParticleBasicMaterial({
 			color: 0xFFFFFF,
 			size: 1,
-			transparent: true
+			transparent: true,
+			opacity: 0
 		});
 
 
@@ -163,6 +162,21 @@
 	        value: 0
 	    }
 	};
+
+
+	var loader = new THREE.SceneLoader(),
+		canvas = document.getElementById('preloader'),
+		ctx = canvas.getContext("2d"),
+		margin = { all : 10 }
+		pWidth = 88,
+		pHeight = 88,
+		pWidthHalf = (pWidth / 2),
+		pHeightHalf = (pHeight / 2);
+
+	canvas.width = pWidth;
+	canvas.height = pHeight;
+
+
 
 	//==================================================================
 	// Small Helpers
@@ -245,20 +259,34 @@
 		scrollPosition = getYScrollPosition();
 
 		if ( scrollPosition && scrollPosition <= scrollMarks.first.mark) {
-			scrollMarks.first.inView = true;
-			scrollMarks.second.inView = false;
-			scrollMarks.third.inView = false;
+			inViewSectionNumber = 0;
 		}
 		if ( scrollPosition && scrollPosition >= scrollMarks.first.mark && scrollPosition <= scrollMarks.second.mark) {
-			scrollMarks.first.inView = false;
-			scrollMarks.second.inView = true;
-			scrollMarks.third.inView = false;
+			inViewSectionNumber = 1;
 		}
-		// if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
-		// 	scrollMarks.first.inView = false;
-		// 	scrollMarks.second.inView = false;
-		// 	scrollMarks.third.inView = true;
-		// }
+		if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
+			inViewSectionNumber = 2;
+		}
+
+		if (inViewSectionNumber == 0 && !scrollMarks.first.triggerd) {
+			rotSpeed = 0.0008;
+			loadFirstBlenderScene('scene/scene1.js');
+			scrollMarks.first.triggerd = true;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = false;
+		} else if (inViewSectionNumber == 1 && !scrollMarks.second.triggerd) {
+			rotSpeed = 0.0014;
+			loadSecondBlenderScene('scene/scene2.js');
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = true;
+			scrollMarks.third.triggerd = false;
+		} else if (inViewSectionNumber == 2 && !scrollMarks.third.triggerd) {
+			rotSpeed = 0.0008;
+			loadThirdBlenderScene('scene/scene2.js');
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = true;
+		}
 
 	}
 
@@ -531,12 +559,6 @@
 		    volume: "0.3"               // not so loud please
 		});
 
-/*		var invisible = findObjectsByNames(['Icosphere']);
-
-		for (var i = 0; i < invisible.length; i++) {
-			invisible[i].visible = false;
-		}
-*/
 		$.ionSound.play("computer_error");
 	}
 
@@ -632,42 +654,6 @@
 	}
 
 
-
-	/**
-	 * [addParticleSystem description]
-	 */
-	function addParticleSystem () {
-		particleSystem = new THREE.ParticleSystem(
-				particles,
-				pMaterial);
-
-		particleSystem.sortParticles = true;
-
-		particles = new THREE.Geometry();
-
-		for(var p = 0; p < particleCount; p++) {
-			
-				// create a particle with random
-				var pX = Math.random() * 8 - 1 - Math.random() * 7,
-					pY = Math.random() * 8 - 1 - Math.random() * 7,
-					pZ = Math.random() * 8 - 1 - Math.random() * 7,
-				    particle = new THREE.Vector3(pX, pY, pZ);
-
-				// create a velocity vector
-				particle.velocity = new THREE.Vector3(
-					0,				// x
-					-Math.random(),	// y
-					0);				// z
-
-				// add it to the geometry
-				particles.vertices.push(particle);
-
-			}
-
-		scene.add(particleSystem);
-	}
-
-
 	/**
 	 * [addSharkParticleSystem description]
 	 */
@@ -678,12 +664,12 @@
 
 		particleSystem = new THREE.ParticleSystem(
 				particles,
-				pMaterial);
+				pmMaterial);
 
-		scene.add( new THREE.BoxHelper( particleSystem) );
+/*		scene.add( new THREE.BoxHelper( particleSystem) );
 		scene.add( new THREE.FaceNormalsHelper( particleSystem) );
 		scene.add( new THREE.VertexNormalsHelper( particleSystem) );
-		scene.add( new THREE.WireframeHelper( particleSystem) );﻿
+		scene.add( new THREE.WireframeHelper( particleSystem) );﻿*/
 
 		particleSystem.sortParticles = true;
 
@@ -696,12 +682,6 @@
 					pZ = SHARKS[p].position.z,
 				    particle = new THREE.Vector3(pX, pY, pZ);
 
-	/*			var theta = Math.random()*2*Math.PI;
-		    	var phi = Math.acos(Math.random()*2-1);
-		    	var pX = 2*Math.sin(phi)*Math.cos(theta);
-		    	var pY = 2*Math.sin(phi)*Math.sin(theta);
-		    	var pZ = 2*Math.cos(phi);*/
-
 /*			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
 			    	pY = Math.random() * 20 - 1 - Math.random() * 20,
 			    	pZ = Math.random() * 20 - 1 - Math.random() * 20;*/
@@ -712,10 +692,10 @@
 
 				new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[p] } )
 				.to( { 
-						x : pX + Math.random() * 10,
-						y : pY + Math.random() * 10,
-						z : pZ + Math.random() * 10
-					 }, 4000 )
+						x : pX * 10,
+						y : pY * 10,
+						z : pZ * 10
+					 }, 10000 )
 				.easing( TWEEN.Easing.Quadratic.InOut )
 				.onUpdate(function() {
 					this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
@@ -736,53 +716,6 @@
 	}
 
 
-
-	/**
-	 * [particleUpdate description]
-	 * @return {[type]} [description]
-	 */
-	function particleUpdate () {
-		if(!particleSystem)
-		return;
-
-
-		particleSystem.rotation.y += 0.0015;
-
-		var pCount = particleCount;
-		while (pCount--) {
-
-			// get the particle
-			var particle = particles.vertices[pCount];
-
-			// check if we need to reset
-			if (particle.z < -6) {
-					particle.z = 6;
-					//particle.velocity.y = 0;
-				}
-
-			//particle.x = particle.x * Math.PI;
-			//particle.y = particle.x * Math.PI;
-			//particle.z = particle.x * Math.PI;
-
-			// update the velocity with
-			// a splat of randomniz
-			//particle.velocity.y -= Math.random() * .1;
-
-			// and the position
-			//particle.y *= particle.velocity;
-
-			if (SHARKS.length > 0){
-					SHARKS[pCount].position = new THREE.Vector3(particle.x, particle.y, particle.z);
-				}
-
-		}
-
-			// flag to the particle system
-			// that we've changed its vertices.
-			particleSystem.geometry.__dirtyVertices = true;
-	}
-
-
 	/**
 	 * [render description]
 	 * @param  {[type]} time [description]
@@ -795,124 +728,54 @@
 		uniforms.amplitude.value = Math.sin(time*0.0006) * 0.009;
 		frame += 0.1;
 
-		particleUpdate();
-
-		//camera.position.x += ( mouseX - camera.position.x ) * .001;
-		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
-		if (scrollMarks && scrollMarks.first.inView && !scrollMarks.first.triggerd) {
-			rotSpeed = 0.0008;
-			loadFirstBlenderScene('scene/scene1.js');
-			scrollMarks.first.triggerd = true;
-			scrollMarks.second.triggerd = false;
-			scrollMarks.third.triggerd = false;
-			} else if (scrollMarks && scrollMarks.second.inView && !scrollMarks.second.triggerd) {
-				rotSpeed = 0.0014;
-				loadSecondBlenderScene('scene/scene2.js');
-				scrollMarks.first.triggerd = false;
-				scrollMarks.second.triggerd = true;
-				scrollMarks.third.triggerd = false;
-			} else if (scrollMarks && scrollMarks.third.inView && !scrollMarks.third.triggerd) {
-				rotSpeed = 0.0028;
-				loadThirdBlenderScene('scene/scene2.js');
-				scrollMarks.first.triggerd = false;
-				scrollMarks.second.triggerd = false;
-				scrollMarks.third.triggerd = true;
+		for (var i=0; i < scene.children.length; i++) {
+			if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
+				sceneObject = scene.children[i];
+				sceneObject.rotation.z += rotSpeed;
 			}
-
-		if (scene.children.length > -1) {
-
-			for (var i=0; i < scene.children.length; i++) {
-				if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
-					sceneObject = scene.children[i];
-					sceneObject.rotation.z += rotSpeed;
-				}
-			}
-
-			glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
-
-			if (glitchCounter > 248 && glitchCounter < (250 + glitchRepeats)) {
-
-				if (glitchRepeatCounter === 0) {
-					glitchStart = effect.uniforms[ 'amount' ].value;
-					glitchRepeatCounter++;
-					$.ionSound.play("synth_stab");
-				} else if (glitchRepeatCounter === glitchRepeats) {
-					effect.uniforms[ 'amount' ].value = glitchStart;
-					glitchRepeatCounter = 0;
-					if (SCENELAMPS.length){
-						SCENELAMPS[1].intensity = 0.6;
-						SCENELAMPS[2].intensity = 0.6;
-					}
-				} else {
-					effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
-					if (SCENELAMPS.length){
-						SCENELAMPS[1].intensity = Math.random() * 0.35;
-						SCENELAMPS[2].intensity = Math.random() * 0.95;
-					}
-					if (pulsar && pulsarRadius < 18) {
-						pulsarRadius += Math.random() * 2;
-						pulsar.scale.x = pulsarRadius;
-						pulsar.scale.y = pulsarRadius;
-						pulsar.scale.z = pulsarRadius;
-					} else if ( pulsarRadius >= 18 ) {
-						pulsarRadius = 1;
- 					}
-					glitchRepeatCounter++;
-				}
-			}
-
 		}
+
+		if (particleSystem)
+			particleSystem.rotation.y += 0.0008;
+
+		glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
+
+		if (glitchCounter > 248 && glitchCounter < (250 + glitchRepeats)) {
+
+			if (glitchRepeatCounter === 0) {
+				glitchStart = effect.uniforms[ 'amount' ].value;
+				glitchRepeatCounter++;
+				$.ionSound.play("synth_stab");
+			} else if (glitchRepeatCounter === glitchRepeats) {
+				effect.uniforms[ 'amount' ].value = glitchStart;
+				glitchRepeatCounter = 0;
+				if (SCENELAMPS.length){
+					SCENELAMPS[1].intensity = 0.6;
+					SCENELAMPS[2].intensity = 0.6;
+				}
+			} else {
+				effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
+				if (SCENELAMPS.length){
+					SCENELAMPS[1].intensity = Math.random() * 0.35;
+					SCENELAMPS[2].intensity = Math.random() * 0.95;
+				}
+				if (pulsar && pulsarRadius < 18) {
+					pulsarRadius += Math.random() * 2;
+					pulsar.scale.x = pulsarRadius;
+					pulsar.scale.y = pulsarRadius;
+					pulsar.scale.z = pulsarRadius;
+				} else if ( pulsarRadius >= 18 ) {
+					pulsarRadius = 1;
+					}
+				glitchRepeatCounter++;
+			}
+		}
+
 		TWEEN.update();
 		camera.lookAt( scene.position );
 		composer.render(scene, camera);
 		//renderer.render(scene, camera);
 	}
-
-
-
-
-
-
-	/**
-	 * [pick description]
-	 * @return {[type]} [description]
-	 */
-	function pick() {
-
-		var vector = new THREE.Vector3( mouseX, mouseY, 1 );
-		projector.unprojectVector( vector, camera );
-
-		raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
-		var intersects = raycaster.intersectObjects( scene.children );
-
-		if ( intersects.length > 0 ) {
-
-			if ( INTERSECTED != intersects[ 0 ].object ) {
-
-				if ( INTERSECTED && INTERSECTED.material ){
-					if(INTERSECTED.material.emissive) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-				}
-
-				INTERSECTED = intersects[ 0 ].object;
-				if( INTERSECTED.material.emissive ){
-					INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-					INTERSECTED.material.emissive.setHex( 0xff0000 );
-				}
-
-			}
-
-		} else {
-
-			if ( INTERSECTED && INTERSECTED.material.emissive ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-			INTERSECTED = null;
-
-		}
-
-
-	}
-
-
 
 
 
@@ -923,11 +786,14 @@
 	 */
 	function animate(time) {
 		requestAnimationFrame( animate );
-
 		render(time);
 
 	}
 
+	/**
+	 * [animatePreloader description]
+	 * @return {[type]} [description]
+	 */
 	function animatePreloader () {
 		animationRequestID = requestAnimationFrame( animatePreloader );
 		TWEEN.update();
@@ -968,9 +834,6 @@
 		container.appendChild(renderer.domElement);
 
 		loadFirstBlenderScene('scene/scene1.js');
-/*		setTimeout(function () {
-			loadSecondBlenderScene('scene/scene2.js');
-		}, 5000);*/
 
 		cancelAnimationFrame(animationRequestID);
 		animationRequestID = undefined;
@@ -979,6 +842,57 @@
 	}
 
 
+	function startPrealoader () {
+		$('.home .arrow').fadeOut( "fast" );
+		document.body.style.overflow = "hidden";
+		animatePreloader();
+
+		new TWEEN.Tween( { progress : 0, loader : loader } )
+		.to( { progress : 0.5 }, 1000 )
+		.easing( TWEEN.Easing.Quadratic.InOut )
+		.onUpdate(function() {
+			ctx.strokeStyle="#DADADA";
+			ctx.fillStyle = "#DADADA";
+			ctx.beginPath();
+			ctx.clearRect(0, 0, pWidth, pHeight);
+			ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+			ctx.lineWidth=3;
+			ctx.stroke();
+		}).onComplete(function () {
+			loader.load( 'scene/scene1.js', function () {
+
+				new TWEEN.Tween( { progress : 1, loader : loader } )
+				.to( { progress : 1.5 }, 5000 )
+				.easing( TWEEN.Easing.Quadratic.InOut )
+				.onUpdate(function() {
+					ctx.beginPath();
+					ctx.clearRect(0, 0, pWidth, pHeight);
+					ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+					ctx.stroke();
+				}).onComplete(function () {
+					loader.load( 'scene/scene2.js', function () {
+
+						new TWEEN.Tween( { progress : 1.5, loader : loader } )
+						.to( { progress : 2 }, 500 )
+						.easing( TWEEN.Easing.Quadratic.InOut )
+						.onUpdate(function() {
+							ctx.beginPath();
+							ctx.clearRect(0, 0, pWidth, pHeight);
+							ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+							ctx.stroke();
+						}).start();
+
+						init();
+						document.body.style.overflow = "";
+						$('.preloaderContainer').fadeOut( "slow" );
+						$('.home .arrow').fadeIn( "slow" );
+					});
+				}).start();
+
+			});
+		}).start();
+	}
+
 
 	//start if webgl supported
 	if ( Modernizr.webgl ){
@@ -986,77 +900,15 @@
 		
 		$(document).ready(function($) {
 
-			$('.home .arrow').fadeOut( "fast" );
-			// document.body.style.overflow = "hidden";
-
-			var loader = new THREE.SceneLoader(),
-				canvas = document.getElementById('preloader'),
-				ctx = canvas.getContext("2d"),
-				margin = { all : 10 }
-				pWidth = 88,
-				pHeight = 88,
-				pWidthHalf = (pWidth / 2),
-				pHeightHalf = (pHeight / 2);
-
-			canvas.width = pWidth;
-			canvas.height = pHeight;
-			animatePreloader();
-
-			new TWEEN.Tween( { progress : 0, loader : loader } )
-			.to( { progress : 0.5 }, 1000 )
-			.easing( TWEEN.Easing.Quadratic.InOut )
-			.onUpdate(function() {
-				ctx.beginPath();
-				ctx.clearRect(0, 0, pWidth, pHeight);
-				ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-				ctx.lineWidth=3;
-				ctx.strokeStyle="#DADADA";
-				ctx.stroke();
-				ctx.fillStyle = "#DADADA";
-			}).onComplete(function () {
-				loader.load( 'scene/scene1.js', function () {
-
-					new TWEEN.Tween( { progress : 1, loader : loader } )
-					.to( { progress : 1.5 }, 5000 )
-					.easing( TWEEN.Easing.Quadratic.InOut )
-					.onUpdate(function() {
-						ctx.beginPath();
-						ctx.clearRect(0, 0, pWidth, pHeight);
-						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-						ctx.stroke();
-						ctx.fillStyle = "#DADADA";
-					}).onComplete(function () {
-						loader.load( 'scene/scene2.js', function () {
-
-							new TWEEN.Tween( { progress : 1.5, loader : loader } )
-							.to( { progress : 2 }, 500 )
-							.easing( TWEEN.Easing.Quadratic.InOut )
-							.onUpdate(function() {
-								ctx.beginPath();
-								ctx.clearRect(0, 0, pWidth, pHeight);
-								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-								ctx.stroke();
-								ctx.fillStyle = "#DADADA";
-							}).start();
-
-							init();
-							document.body.style.overflow = "";
-							$('.preloaderContainer').fadeOut( "slow" );
-							$('.home .arrow').fadeIn( "slow" );
-						});
-					}).start();
-
-				});
-			}).start();
-
+			setTimeout(function () {
+				window.scrollTo(0,0);
+				startPrealoader();
+			}, 100);
 
 
 		});
 
 	}
-
-
-
 
 
 })();
