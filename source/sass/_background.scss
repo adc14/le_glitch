@@ -6,3 +6,35 @@
 	bottom: 0;
 	z-index: 1;
 }
+
+@media  screen and (max-width: 767px),
+        screen and (-webkit-min-device-pixel-ratio: 2),
+        screen and (   min--moz-device-pixel-ratio: 2),
+        screen and (     -o-min-device-pixel-ratio: 2/1),
+        screen and (        min-device-pixel-ratio: 2),
+        screen and (                min-resolution: 192dpi),
+        screen and (                min-resolution: 2dppx) {
+    #threeBackground{
+        display: none;
+        > canvas{
+            display: none;
+        }
+    }
+    h2.glitch{
+        font-size: 2em;
+    }
+    body{
+        -webkit-hyphens: auto;
+          -moz-hyphens: auto;
+          -ms-hyphens: auto;
+          hyphens: auto;
+        background-size: cover;
+        background-color: black;
+        background-image: url('../img/state1.jpg');
+        background-repeat: no-repeat;
+        &.mobi-bg2{ background-image: url('../img/state2.jpg'); }
+        &.mobi-bg3{ background-image: url('../img/state3.jpg'); }
+        &.mobi-bg4{ background-image: url('../img/state5.jpg'); }
+        &.mobi-bg5{ background-image: url('../img/state6.jpg'); }
+    }
+}

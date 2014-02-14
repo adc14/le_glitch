@@ -144,14 +144,31 @@ $(document).ready(function($) {
 		return false;
 	});
 
+    // Mobile Background Change
+    $('#section1').waypoint(function() {
+        console.log("section1");
+        $('body').toggleClass('mobi-bg1')
+    });
+    $('#section2').waypoint(function() {
+        console.log("section2");
+        $('body').toggleClass('mobi-bg2')
+    });
+    $('#section3').waypoint(function() {
+        console.log("section3");
+        $('body').toggleClass('mobi-bg3')
+    });
+    $('#section4').waypoint(function() {
+        console.log("section4");
+        $('body').toggleClass('mobi-bg4')
+    });
 
-	// Konami Code 
+
+	// Konami Code
 	var easter_egg = new Konami();
 	easter_egg.code = function() {
 		window.location.href = "well-well-what-do-we-have-here.html";
 	}
 	easter_egg.load();
-
 
 	// page related arg tips
 	if( $('body').hasClass('main') ){
