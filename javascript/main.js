@@ -1615,6 +1615,9 @@ THREE.ShaderPass.prototype = {
 		HALFHEIGTH = HEIGHT / 2,
 		VIEW_ANGLE = 60,
 	    ASPECT = WIDTH / HEIGHT,
+		SCENELAMPS = [],
+		SHARKS = [],
+		SHARKS_DISTANCE = 15,
 	    animationRequestID = undefined,
 		container = null,
 		mouseX = 0,
@@ -1637,31 +1640,28 @@ THREE.ShaderPass.prototype = {
 		segments = 12,
 		flatShadingExceptions = ['Floor']
 		rotationExceptions = ['Floor', 'Glitch'],
-		SCENELAMPS = [],
-		SHARKS = [],
 		pulsar = null,
 		pulsarRadius = 0.5,
 		particleSystem = null,
 		scrollPosition = 0,
-		segmentHeight = window.innerHeight;
+		lastScrollPosition = 0,
+		segmentHeight = window.innerHeight,
+		inViewSectionNumber = 0,
 		scrollMarks = {
 			first : {
 				mark : segmentHeight * 1,
-				inView : false,
 				triggerd : false
 			},
 			second : {
 				mark : segmentHeight * 2,
-				inView : false,
 				triggerd : false
 			},
 			third : {
-				mark : segmentHeight * 3,
-				inView : false,
+				mark : segmentHeight * 4,
 				triggerd : false
 			}
 		},
-		rotSpeed = 0.0008;
+		rotSpeed = 0.0018;
 
 
 	var mouse = new THREE.Vector2(),
@@ -1671,8 +1671,6 @@ THREE.ShaderPass.prototype = {
 
 	var pickingData = [], pickingTexture, pickingScene;
 	var objects = [], highlightBox;
-
-	var clock = new THREE.Clock();
 
 	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 
@@ -1694,12 +1692,13 @@ THREE.ShaderPass.prototype = {
 				"/img/arrow.png"
 			),
 			blending: THREE.AdditiveBlending,
-			transparent: true
+			transparent: false
 		}),
 		pmMaterial = new THREE.ParticleBasicMaterial({
 			color: 0xFFFFFF,
 			size: 1,
-			transparent: true
+			transparent: true,
+			opacity: 0
 		});
 
 
@@ -1719,6 +1718,21 @@ THREE.ShaderPass.prototype = {
 	        value: 0
 	    }
 	};
+
+
+	var loader = new THREE.SceneLoader(),
+		canvas = document.getElementById('preloader'),
+		ctx = canvas.getContext("2d"),
+		margin = { all : 10 }
+		pWidth = 88,
+		pHeight = 88,
+		pWidthHalf = (pWidth / 2),
+		pHeightHalf = (pHeight / 2);
+
+	canvas.width = pWidth;
+	canvas.height = pHeight;
+
+
 
 	//==================================================================
 	// Small Helpers
@@ -1801,21 +1815,106 @@ THREE.ShaderPass.prototype = {
 		scrollPosition = getYScrollPosition();
 
 		if ( scrollPosition && scrollPosition <= scrollMarks.first.mark) {
-			scrollMarks.first.inView = true;
-			scrollMarks.second.inView = false;
-			scrollMarks.third.inView = false;
+			inViewSectionNumber = 0;
 		}
 		if ( scrollPosition && scrollPosition >= scrollMarks.first.mark && scrollPosition <= scrollMarks.second.mark) {
-			scrollMarks.first.inView = false;
-			scrollMarks.second.inView = true;
-			scrollMarks.third.inView = false;
+			inViewSectionNumber = 1;
 		}
-		// if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
-		// 	scrollMarks.first.inView = false;
-		// 	scrollMarks.second.inView = false;
-		// 	scrollMarks.third.inView = true;
-		// }
+		if ( scrollPosition && scrollPosition >= scrollMarks.third.mark) {
+			inViewSectionNumber = 2;
+		}
 
+		if (inViewSectionNumber == 0 && !scrollMarks.first.triggerd) {
+			rotSpeed = 0.0018;
+			loadFirstBlenderScene('scene/scene1.js');
+			scrollMarks.first.triggerd = true;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = false;
+		} else if (inViewSectionNumber == 1 && !scrollMarks.second.triggerd) {
+			rotSpeed = 0.0020;
+			loadSecondBlenderScene('scene/scene2.js');
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = true;
+			scrollMarks.third.triggerd = false;
+		} else if (inViewSectionNumber == 2 && !scrollMarks.third.triggerd) {
+			rotSpeed = 0.0008;
+			loadThirdBlenderScene('scene/scene2.js');
+			scrollMarks.first.triggerd = false;
+			scrollMarks.second.triggerd = false;
+			scrollMarks.third.triggerd = true;
+		}
+
+		if (inViewSectionNumber == 2 && scrollMarks.third.triggerd) {
+
+			for (var i = 0; i < SHARKS.length; i++) {
+				var pX = SHARKS[i].position.x,
+					pY = SHARKS[i].position.y,
+					pZ = SHARKS[i].position.z;
+
+				if (SHARKS[i].startPos) {
+
+					
+					if (scrollPosition > lastScrollPosition) {	// down direction
+
+						if ( Math.abs(pX) < SHARKS[i].endPosABS.x &&
+							 Math.abs(pY) < SHARKS[i].endPosABS.y &&
+							 Math.abs(pZ) < SHARKS[i].endPosABS.z ) {
+
+							new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[i] } )
+								.to( { 
+										x : pX + pX * SHARKS[i].velocity,
+										y : pY + pY * SHARKS[i].velocity,
+										z : pZ + pZ * SHARKS[i].velocity
+									 }, 300 )
+								.easing( TWEEN.Easing.Quadratic.InOut )
+								.onUpdate(function() {
+									this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
+								}).start();
+
+						}
+
+
+					} else { 									// up direction
+
+
+						new TWEEN.Tween( {
+								x : pX,
+								y : pY,
+								z : pZ,
+								shark : SHARKS[i],
+								start : SHARKS[i].startPos,
+								abs : SHARKS[i].startPosABS
+							} )
+							.to( { 
+									x : pX - pX * SHARKS[i].velocity,
+									y : pY - pY * SHARKS[i].velocity,
+									z : pZ - pZ * SHARKS[i].velocity
+								 }, 300 )
+							.easing( TWEEN.Easing.Quadratic.InOut )
+							.onUpdate(function() {
+
+								if ( Math.abs(this.x) < this.abs.x &&
+									 Math.abs(this.y) < this.abs.y &&
+									 Math.abs(this.z) < this.abs.z) {
+									this.x = this.start.x;
+									this.y = this.start.y;
+									this.z = this.start.z;
+								}
+
+								this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
+									
+							}).start();
+
+
+					}
+
+				}
+
+			}
+
+		}
+
+		lastScrollPosition = scrollPosition;
 	}
 
 	/**
@@ -2087,12 +2186,6 @@ THREE.ShaderPass.prototype = {
 		    volume: "0.3"               // not so loud please
 		});
 
-/*		var invisible = findObjectsByNames(['Icosphere']);
-
-		for (var i = 0; i < invisible.length; i++) {
-			invisible[i].visible = false;
-		}
-*/
 		$.ionSound.play("computer_error");
 	}
 
@@ -2131,6 +2224,42 @@ THREE.ShaderPass.prototype = {
 
 		SCENELAMPS = findObjectsByNames(['Lamp']);
 		SHARKS = findObjectsByNames(['Icosphere_cell']);
+
+		// Calculate positions for animation
+		for (var i = 0; i < SHARKS.length; i++) {
+			var pX = SHARKS[i].position.x,
+				pY = SHARKS[i].position.y,
+				pZ = SHARKS[i].position.z;
+
+			SHARKS[i].startPos = {
+				x : pX,
+				y : pY,
+				z : pZ
+			};
+
+			SHARKS[i].startPosABS = {
+				x : Math.abs(pX),
+				y : Math.abs(pY),
+				z : Math.abs(pZ)
+			};
+
+			SHARKS[i].endPos = {
+				x : pX * SHARKS_DISTANCE,
+				y : pY * SHARKS_DISTANCE,
+				z : pZ * SHARKS_DISTANCE
+			};
+
+			SHARKS[i].endPosABS = {
+				x : Math.abs(pX * SHARKS_DISTANCE),
+				y : Math.abs(pY * SHARKS_DISTANCE),
+				z : Math.abs(pZ * SHARKS_DISTANCE)
+			};
+
+			SHARKS[i].velocity = Math.random();
+		}
+
+
+
 		addPulsar();
 		
 
@@ -2188,42 +2317,6 @@ THREE.ShaderPass.prototype = {
 	}
 
 
-
-	/**
-	 * [addParticleSystem description]
-	 */
-	function addParticleSystem () {
-		particleSystem = new THREE.ParticleSystem(
-				particles,
-				pMaterial);
-
-		particleSystem.sortParticles = true;
-
-		particles = new THREE.Geometry();
-
-		for(var p = 0; p < particleCount; p++) {
-			
-				// create a particle with random
-				var pX = Math.random() * 8 - 1 - Math.random() * 7,
-					pY = Math.random() * 8 - 1 - Math.random() * 7,
-					pZ = Math.random() * 8 - 1 - Math.random() * 7,
-				    particle = new THREE.Vector3(pX, pY, pZ);
-
-				// create a velocity vector
-				particle.velocity = new THREE.Vector3(
-					0,				// x
-					-Math.random(),	// y
-					0);				// z
-
-				// add it to the geometry
-				particles.vertices.push(particle);
-
-			}
-
-		scene.add(particleSystem);
-	}
-
-
 	/**
 	 * [addSharkParticleSystem description]
 	 */
@@ -2234,12 +2327,12 @@ THREE.ShaderPass.prototype = {
 
 		particleSystem = new THREE.ParticleSystem(
 				particles,
-				pMaterial);
+				pmMaterial);
 
-		scene.add( new THREE.BoxHelper( particleSystem) );
+/*		scene.add( new THREE.BoxHelper( particleSystem) );
 		scene.add( new THREE.FaceNormalsHelper( particleSystem) );
 		scene.add( new THREE.VertexNormalsHelper( particleSystem) );
-		scene.add( new THREE.WireframeHelper( particleSystem) );﻿
+		scene.add( new THREE.WireframeHelper( particleSystem) );﻿*/
 
 		particleSystem.sortParticles = true;
 
@@ -2249,93 +2342,14 @@ THREE.ShaderPass.prototype = {
 			
 				var pX = SHARKS[p].position.x,
 					pY = SHARKS[p].position.y,
-					pZ = SHARKS[p].position.z,
-				    particle = new THREE.Vector3(pX, pY, pZ);
+					pZ = SHARKS[p].position.z;
 
-	/*			var theta = Math.random()*2*Math.PI;
-		    	var phi = Math.acos(Math.random()*2-1);
-		    	var pX = 2*Math.sin(phi)*Math.cos(theta);
-		    	var pY = 2*Math.sin(phi)*Math.sin(theta);
-		    	var pZ = 2*Math.cos(phi);*/
-
-/*			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
-			    	pY = Math.random() * 20 - 1 - Math.random() * 20,
-			    	pZ = Math.random() * 20 - 1 - Math.random() * 20;*/
-			        
-				var particle = new THREE.Vector3(pX, pY, pZ);
 
 				particleSystem.add(SHARKS[p]);
-
-				new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[p] } )
-				.to( { 
-						x : pX + Math.random() * 10,
-						y : pY + Math.random() * 10,
-						z : pZ + Math.random() * 10
-					 }, 4000 )
-				.easing( TWEEN.Easing.Quadratic.InOut )
-				.onUpdate(function() {
-					this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
-				}).start();
-
-				// create a velocity vector
-				particle.velocity = new THREE.Vector3(
-					0,				// x
-					-Math.random(),	// y
-					0);				// z
-
-				// add it to the geometry
-				particles.vertices.push(particle);
 
 			}
 
 		scene.add(particleSystem);
-	}
-
-
-
-	/**
-	 * [particleUpdate description]
-	 * @return {[type]} [description]
-	 */
-	function particleUpdate () {
-		if(!particleSystem)
-		return;
-
-
-		particleSystem.rotation.y += 0.0015;
-
-		var pCount = particleCount;
-		while (pCount--) {
-
-			// get the particle
-			var particle = particles.vertices[pCount];
-
-			// check if we need to reset
-			if (particle.z < -6) {
-					particle.z = 6;
-					//particle.velocity.y = 0;
-				}
-
-			//particle.x = particle.x * Math.PI;
-			//particle.y = particle.x * Math.PI;
-			//particle.z = particle.x * Math.PI;
-
-			// update the velocity with
-			// a splat of randomniz
-			//particle.velocity.y -= Math.random() * .1;
-
-			// and the position
-			//particle.y *= particle.velocity;
-
-			if (SHARKS.length > 0){
-					SHARKS[pCount].position = new THREE.Vector3(particle.x, particle.y, particle.z);
-				}
-
-		}
-
-			// flag to the particle system
-			// that we've changed its vertices.
-			particleSystem.geometry.__dirtyVertices = true;
 	}
 
 
@@ -2351,124 +2365,54 @@ THREE.ShaderPass.prototype = {
 		uniforms.amplitude.value = Math.sin(time*0.0006) * 0.009;
 		frame += 0.1;
 
-		particleUpdate();
-
-		//camera.position.x += ( mouseX - camera.position.x ) * .001;
-		//camera.position.y += ( - mouseY - camera.position.y ) * .001;
-		if (scrollMarks && scrollMarks.first.inView && !scrollMarks.first.triggerd) {
-			rotSpeed = 0.0008;
-			loadFirstBlenderScene('scene/scene1.js');
-			scrollMarks.first.triggerd = true;
-			scrollMarks.second.triggerd = false;
-			scrollMarks.third.triggerd = false;
-			} else if (scrollMarks && scrollMarks.second.inView && !scrollMarks.second.triggerd) {
-				rotSpeed = 0.0014;
-				loadSecondBlenderScene('scene/scene2.js');
-				scrollMarks.first.triggerd = false;
-				scrollMarks.second.triggerd = true;
-				scrollMarks.third.triggerd = false;
-			} else if (scrollMarks && scrollMarks.third.inView && !scrollMarks.third.triggerd) {
-				rotSpeed = 0.0028;
-				loadThirdBlenderScene('scene/scene2.js');
-				scrollMarks.first.triggerd = false;
-				scrollMarks.second.triggerd = false;
-				scrollMarks.third.triggerd = true;
+		for (var i=0; i < scene.children.length; i++) {
+			if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
+				sceneObject = scene.children[i];
+				sceneObject.rotation.z += rotSpeed;
 			}
-
-		if (scene.children.length > -1) {
-
-			for (var i=0; i < scene.children.length; i++) {
-				if(rotationExceptions.indexOf(scene.children[i].name) === -1) {
-					sceneObject = scene.children[i];
-					sceneObject.rotation.z += rotSpeed;
-				}
-			}
-
-			glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
-
-			if (glitchCounter > 248 && glitchCounter < (250 + glitchRepeats)) {
-
-				if (glitchRepeatCounter === 0) {
-					glitchStart = effect.uniforms[ 'amount' ].value;
-					glitchRepeatCounter++;
-					$.ionSound.play("synth_stab");
-				} else if (glitchRepeatCounter === glitchRepeats) {
-					effect.uniforms[ 'amount' ].value = glitchStart;
-					glitchRepeatCounter = 0;
-					if (SCENELAMPS.length){
-						SCENELAMPS[1].intensity = 0.6;
-						SCENELAMPS[2].intensity = 0.6;
-					}
-				} else {
-					effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
-					if (SCENELAMPS.length){
-						SCENELAMPS[1].intensity = Math.random() * 0.35;
-						SCENELAMPS[2].intensity = Math.random() * 0.95;
-					}
-					if (pulsar && pulsarRadius < 18) {
-						pulsarRadius += Math.random() * 2;
-						pulsar.scale.x = pulsarRadius;
-						pulsar.scale.y = pulsarRadius;
-						pulsar.scale.z = pulsarRadius;
-					} else if ( pulsarRadius >= 18 ) {
-						pulsarRadius = 1;
- 					}
-					glitchRepeatCounter++;
-				}
-			}
-
 		}
+
+		if (particleSystem)
+			particleSystem.rotation.y += 0.0016;
+
+		glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
+
+		if (glitchCounter > 248 && glitchCounter < (250 + glitchRepeats)) {
+
+			if (glitchRepeatCounter === 0) {
+				glitchStart = effect.uniforms[ 'amount' ].value;
+				glitchRepeatCounter++;
+				$.ionSound.play("synth_stab");
+			} else if (glitchRepeatCounter === glitchRepeats) {
+				effect.uniforms[ 'amount' ].value = glitchStart;
+				glitchRepeatCounter = 0;
+				if (SCENELAMPS.length){
+					SCENELAMPS[1].intensity = 0.6;
+					SCENELAMPS[2].intensity = 0.6;
+				}
+			} else {
+				effect.uniforms[ 'amount' ].value = Math.random() * 0.035;
+				if (SCENELAMPS.length){
+					SCENELAMPS[1].intensity = Math.random() * 0.35;
+					SCENELAMPS[2].intensity = Math.random() * 0.95;
+				}
+				if (pulsar && pulsarRadius < 18) {
+					pulsarRadius += Math.random() * 2;
+					pulsar.scale.x = pulsarRadius;
+					pulsar.scale.y = pulsarRadius;
+					pulsar.scale.z = pulsarRadius;
+				} else if ( pulsarRadius >= 18 ) {
+					pulsarRadius = 1;
+					}
+				glitchRepeatCounter++;
+			}
+		}
+
 		TWEEN.update();
 		camera.lookAt( scene.position );
 		composer.render(scene, camera);
 		//renderer.render(scene, camera);
 	}
-
-
-
-
-
-
-	/**
-	 * [pick description]
-	 * @return {[type]} [description]
-	 */
-	function pick() {
-
-		var vector = new THREE.Vector3( mouseX, mouseY, 1 );
-		projector.unprojectVector( vector, camera );
-
-		raycaster.set( camera.position, vector.sub( camera.position ).normalize() );
-		var intersects = raycaster.intersectObjects( scene.children );
-
-		if ( intersects.length > 0 ) {
-
-			if ( INTERSECTED != intersects[ 0 ].object ) {
-
-				if ( INTERSECTED && INTERSECTED.material ){
-					if(INTERSECTED.material.emissive) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-				}
-
-				INTERSECTED = intersects[ 0 ].object;
-				if( INTERSECTED.material.emissive ){
-					INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-					INTERSECTED.material.emissive.setHex( 0xff0000 );
-				}
-
-			}
-
-		} else {
-
-			if ( INTERSECTED && INTERSECTED.material.emissive ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-			INTERSECTED = null;
-
-		}
-
-
-	}
-
-
 
 
 
@@ -2479,11 +2423,14 @@ THREE.ShaderPass.prototype = {
 	 */
 	function animate(time) {
 		requestAnimationFrame( animate );
-
 		render(time);
 
 	}
 
+	/**
+	 * [animatePreloader description]
+	 * @return {[type]} [description]
+	 */
 	function animatePreloader () {
 		animationRequestID = requestAnimationFrame( animatePreloader );
 		TWEEN.update();
@@ -2524,9 +2471,6 @@ THREE.ShaderPass.prototype = {
 		container.appendChild(renderer.domElement);
 
 		loadFirstBlenderScene('scene/scene1.js');
-/*		setTimeout(function () {
-			loadSecondBlenderScene('scene/scene2.js');
-		}, 5000);*/
 
 		cancelAnimationFrame(animationRequestID);
 		animationRequestID = undefined;
@@ -2535,6 +2479,57 @@ THREE.ShaderPass.prototype = {
 	}
 
 
+	function startPrealoader () {
+		$('.home .arrow').fadeOut( "fast" );
+		document.body.style.overflow = "hidden";
+		animatePreloader();
+
+		new TWEEN.Tween( { progress : 0, loader : loader } )
+		.to( { progress : 0.5 }, 1000 )
+		.easing( TWEEN.Easing.Quadratic.InOut )
+		.onUpdate(function() {
+			ctx.strokeStyle="#DADADA";
+			ctx.fillStyle = "#DADADA";
+			ctx.beginPath();
+			ctx.clearRect(0, 0, pWidth, pHeight);
+			ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+			ctx.lineWidth=3;
+			ctx.stroke();
+		}).onComplete(function () {
+			loader.load( 'scene/scene1.js', function () {
+
+				new TWEEN.Tween( { progress : 1, loader : loader } )
+				.to( { progress : 1.5 }, 5000 )
+				.easing( TWEEN.Easing.Quadratic.InOut )
+				.onUpdate(function() {
+					ctx.beginPath();
+					ctx.clearRect(0, 0, pWidth, pHeight);
+					ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+					ctx.stroke();
+				}).onComplete(function () {
+					loader.load( 'scene/scene2.js', function () {
+
+						new TWEEN.Tween( { progress : 1.5, loader : loader } )
+						.to( { progress : 2 }, 500 )
+						.easing( TWEEN.Easing.Quadratic.InOut )
+						.onUpdate(function() {
+							ctx.beginPath();
+							ctx.clearRect(0, 0, pWidth, pHeight);
+							ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
+							ctx.stroke();
+						}).start();
+
+						init();
+						document.body.style.overflow = "";
+						$('.preloaderContainer').fadeOut( "slow" );
+						$('.home .arrow').fadeIn( "slow" );
+					});
+				}).start();
+
+			});
+		}).start();
+	}
+
 
 	//start if webgl supported
 	if ( Modernizr.webgl ){
@@ -2542,69 +2537,10 @@ THREE.ShaderPass.prototype = {
 		
 		$(document).ready(function($) {
 
-			$('.home .arrow').fadeOut( "fast" );
-			// document.body.style.overflow = "hidden";
-
-			var loader = new THREE.SceneLoader(),
-				canvas = document.getElementById('preloader'),
-				ctx = canvas.getContext("2d"),
-				margin = { all : 10 }
-				pWidth = 88,
-				pHeight = 88,
-				pWidthHalf = (pWidth / 2),
-				pHeightHalf = (pHeight / 2);
-
-			canvas.width = pWidth;
-			canvas.height = pHeight;
-			animatePreloader();
-
-			new TWEEN.Tween( { progress : 0, loader : loader } )
-			.to( { progress : 0.5 }, 1000 )
-			.easing( TWEEN.Easing.Quadratic.InOut )
-			.onUpdate(function() {
-				ctx.beginPath();
-				ctx.clearRect(0, 0, pWidth, pHeight);
-				ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-				ctx.lineWidth=3;
-				ctx.strokeStyle="#DADADA";
-				ctx.stroke();
-				ctx.fillStyle = "#DADADA";
-			}).onComplete(function () {
-				loader.load( 'scene/scene1.js', function () {
-
-					new TWEEN.Tween( { progress : 1, loader : loader } )
-					.to( { progress : 1.5 }, 5000 )
-					.easing( TWEEN.Easing.Quadratic.InOut )
-					.onUpdate(function() {
-						ctx.beginPath();
-						ctx.clearRect(0, 0, pWidth, pHeight);
-						ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-						ctx.stroke();
-						ctx.fillStyle = "#DADADA";
-					}).onComplete(function () {
-						loader.load( 'scene/scene2.js', function () {
-
-							new TWEEN.Tween( { progress : 1.5, loader : loader } )
-							.to( { progress : 2 }, 500 )
-							.easing( TWEEN.Easing.Quadratic.InOut )
-							.onUpdate(function() {
-								ctx.beginPath();
-								ctx.clearRect(0, 0, pWidth, pHeight);
-								ctx.arc(pWidthHalf,pWidthHalf,pWidthHalf - margin.all,0,Math.PI*this.progress,false);
-								ctx.stroke();
-								ctx.fillStyle = "#DADADA";
-							}).start();
-
-							init();
-							document.body.style.overflow = "";
-							$('.preloaderContainer').fadeOut( "slow" );
-							$('.home .arrow').fadeIn( "slow" );
-						});
-					}).start();
-
-				});
-			}).start();
-
+			setTimeout(function () {
+				window.scrollTo(0,0);
+				startPrealoader();
+			}, 100);
 
 
 		});
@@ -2612,10 +2548,491 @@ THREE.ShaderPass.prototype = {
 	}
 
 
-
-
-
-})();;/*
+})();;// Generated by CoffeeScript 1.6.2
+/*
+jQuery Waypoints - v2.0.4
+Copyright (c) 2011-2014 Caleb Troughton
+Dual licensed under the MIT license and GPL license.
+https://github.com/imakewebthings/jquery-waypoints/blob/master/licenses.txt
+*/
+(function() {
+  var t = [].indexOf ||
+  function(t) {
+    for (var e = 0, n = this.length; e < n; e++) {
+      if (e in this && this[e] === t) return e
+    }
+    return -1
+  }, e = [].slice;
+  (function(t, e) {
+    if (typeof define === "function" && define.amd) {
+      return define("waypoints", ["jquery"], function(n) {
+        return e(n, t)
+      })
+    } else {
+      return e(t.jQuery, t)
+    }
+  })(this, function(n, r) {
+    var i, o, l, s, f, u, c, a, h, d, p, y, v, w, g, m;
+    i = n(r);
+    a = t.call(r, "ontouchstart") >= 0;
+    s = {
+      horizontal: {},
+      vertical: {}
+    };
+    f = 1;
+    c = {};
+    u = "waypoints-context-id";
+    p = "resize.waypoints";
+    y = "scroll.waypoints";
+    v = 1;
+    w = "waypoints-waypoint-ids";
+    g = "waypoint";
+    m = "waypoints";
+    o = function() {
+      function t(t) {
+        var e = this;
+        this.$element = t;
+        this.element = t[0];
+        this.didResize = false;
+        this.didScroll = false;
+        this.id = "context" + f++;
+        this.oldScroll = {
+          x: t.scrollLeft(),
+          y: t.scrollTop()
+        };
+        this.waypoints = {
+          horizontal: {},
+          vertical: {}
+        };
+        this.element[u] = this.id;
+        c[this.id] = this;
+        t.bind(y, function() {
+          var t;
+          if (!(e.didScroll || a)) {
+            e.didScroll = true;
+            t = function() {
+              e.doScroll();
+              return e.didScroll = false
+            };
+            return r.setTimeout(t, n[m].settings.scrollThrottle)
+          }
+        });
+        t.bind(p, function() {
+          var t;
+          if (!e.didResize) {
+            e.didResize = true;
+            t = function() {
+              n[m]("refresh");
+              return e.didResize = false
+            };
+            return r.setTimeout(t, n[m].settings.resizeThrottle)
+          }
+        })
+      }
+      t.prototype.doScroll = function() {
+        var t, e = this;
+        t = {
+          horizontal: {
+            newScroll: this.$element.scrollLeft(),
+            oldScroll: this.oldScroll.x,
+            forward: "right",
+            backward: "left"
+          },
+          vertical: {
+            newScroll: this.$element.scrollTop(),
+            oldScroll: this.oldScroll.y,
+            forward: "down",
+            backward: "up"
+          }
+        };
+        if (a && (!t.vertical.oldScroll || !t.vertical.newScroll)) {
+          n[m]("refresh")
+        }
+        n.each(t, function(t, r) {
+          var i, o, l;
+          l = [];
+          o = r.newScroll > r.oldScroll;
+          i = o ? r.forward : r.backward;
+          n.each(e.waypoints[t], function(t, e) {
+            var n, i;
+            if (r.oldScroll < (n = e.offset) && n <= r.newScroll) {
+              return l.push(e)
+            } else if (r.newScroll < (i = e.offset) && i <= r.oldScroll) {
+              return l.push(e)
+            }
+          });
+          l.sort(function(t, e) {
+            return t.offset - e.offset
+          });
+          if (!o) {
+            l.reverse()
+          }
+          return n.each(l, function(t, e) {
+            if (e.options.continuous || t === l.length - 1) {
+              return e.trigger([i])
+            }
+          })
+        });
+        return this.oldScroll = {
+          x: t.horizontal.newScroll,
+          y: t.vertical.newScroll
+        }
+      };
+      t.prototype.refresh = function() {
+        var t, e, r, i = this;
+        r = n.isWindow(this.element);
+        e = this.$element.offset();
+        this.doScroll();
+        t = {
+          horizontal: {
+            contextOffset: r ? 0 : e.left,
+            contextScroll: r ? 0 : this.oldScroll.x,
+            contextDimension: this.$element.width(),
+            oldScroll: this.oldScroll.x,
+            forward: "right",
+            backward: "left",
+            offsetProp: "left"
+          },
+          vertical: {
+            contextOffset: r ? 0 : e.top,
+            contextScroll: r ? 0 : this.oldScroll.y,
+            contextDimension: r ? n[m]("viewportHeight") : this.$element.height(),
+            oldScroll: this.oldScroll.y,
+            forward: "down",
+            backward: "up",
+            offsetProp: "top"
+          }
+        };
+        return n.each(t, function(t, e) {
+          return n.each(i.waypoints[t], function(t, r) {
+            var i, o, l, s, f;
+            i = r.options.offset;
+            l = r.offset;
+            o = n.isWindow(r.element) ? 0 : r.$element.offset()[e.offsetProp];
+            if (n.isFunction(i)) {
+              i = i.apply(r.element)
+            } else if (typeof i === "string") {
+              i = parseFloat(i);
+              if (r.options.offset.indexOf("%") > -1) {
+                i = Math.ceil(e.contextDimension * i / 100)
+              }
+            }
+            r.offset = o - e.contextOffset + e.contextScroll - i;
+            if (r.options.onlyOnScroll && l != null || !r.enabled) {
+              return
+            }
+            if (l !== null && l < (s = e.oldScroll) && s <= r.offset) {
+              return r.trigger([e.backward])
+            } else if (l !== null && l > (f = e.oldScroll) && f >= r.offset) {
+              return r.trigger([e.forward])
+            } else if (l === null && e.oldScroll >= r.offset) {
+              return r.trigger([e.forward])
+            }
+          })
+        })
+      };
+      t.prototype.checkEmpty = function() {
+        if (n.isEmptyObject(this.waypoints.horizontal) && n.isEmptyObject(this.waypoints.vertical)) {
+          this.$element.unbind([p, y].join(" "));
+          return delete c[this.id]
+        }
+      };
+      return t
+    }();
+    l = function() {
+      function t(t, e, r) {
+        var i, o;
+        r = n.extend({}, n.fn[g].defaults, r);
+        if (r.offset === "bottom-in-view") {
+          r.offset = function() {
+            var t;
+            t = n[m]("viewportHeight");
+            if (!n.isWindow(e.element)) {
+              t = e.$element.height()
+            }
+            return t - n(this).outerHeight()
+          }
+        }
+        this.$element = t;
+        this.element = t[0];
+        this.axis = r.horizontal ? "horizontal" : "vertical";
+        this.callback = r.handler;
+        this.context = e;
+        this.enabled = r.enabled;
+        this.id = "waypoints" + v++;
+        this.offset = null;
+        this.options = r;
+        e.waypoints[this.axis][this.id] = this;
+        s[this.axis][this.id] = this;
+        i = (o = this.element[w]) != null ? o : [];
+        i.push(this.id);
+        this.element[w] = i
+      }
+      t.prototype.trigger = function(t) {
+        if (!this.enabled) {
+          return
+        }
+        if (this.callback != null) {
+          this.callback.apply(this.element, t)
+        }
+        if (this.options.triggerOnce) {
+          return this.destroy()
+        }
+      };
+      t.prototype.disable = function() {
+        return this.enabled = false
+      };
+      t.prototype.enable = function() {
+        this.context.refresh();
+        return this.enabled = true
+      };
+      t.prototype.destroy = function() {
+        delete s[this.axis][this.id];
+        delete this.context.waypoints[this.axis][this.id];
+        return this.context.checkEmpty()
+      };
+      t.getWaypointsByElement = function(t) {
+        var e, r;
+        r = t[w];
+        if (!r) {
+          return []
+        }
+        e = n.extend({}, s.horizontal, s.vertical);
+        return n.map(r, function(t) {
+          return e[t]
+        })
+      };
+      return t
+    }();
+    d = {
+      init: function(t, e) {
+        var r;
+        if (e == null) {
+          e = {}
+        }
+        if ((r = e.handler) == null) {
+          e.handler = t
+        }
+        this.each(function() {
+          var t, r, i, s;
+          t = n(this);
+          i = (s = e.context) != null ? s : n.fn[g].defaults.context;
+          if (!n.isWindow(i)) {
+            i = t.closest(i)
+          }
+          i = n(i);
+          r = c[i[0][u]];
+          if (!r) {
+            r = new o(i)
+          }
+          return new l(t, r, e)
+        });
+        n[m]("refresh");
+        return this
+      },
+      disable: function() {
+        return d._invoke.call(this, "disable")
+      },
+      enable: function() {
+        return d._invoke.call(this, "enable")
+      },
+      destroy: function() {
+        return d._invoke.call(this, "destroy")
+      },
+      prev: function(t, e) {
+        return d._traverse.call(this, t, e, function(t, e, n) {
+          if (e > 0) {
+            return t.push(n[e - 1])
+          }
+        })
+      },
+      next: function(t, e) {
+        return d._traverse.call(this, t, e, function(t, e, n) {
+          if (e < n.length - 1) {
+            return t.push(n[e + 1])
+          }
+        })
+      },
+      _traverse: function(t, e, i) {
+        var o, l;
+        if (t == null) {
+          t = "vertical"
+        }
+        if (e == null) {
+          e = r
+        }
+        l = h.aggregate(e);
+        o = [];
+        this.each(function() {
+          var e;
+          e = n.inArray(this, l[t]);
+          return i(o, e, l[t])
+        });
+        return this.pushStack(o)
+      },
+      _invoke: function(t) {
+        this.each(function() {
+          var e;
+          e = l.getWaypointsByElement(this);
+          return n.each(e, function(e, n) {
+            n[t]();
+            return true
+          })
+        });
+        return this
+      }
+    };
+    n.fn[g] = function() {
+      var t, r;
+      r = arguments[0], t = 2 <= arguments.length ? e.call(arguments, 1) : [];
+      if (d[r]) {
+        return d[r].apply(this, t)
+      } else if (n.isFunction(r)) {
+        return d.init.apply(this, arguments)
+      } else if (n.isPlainObject(r)) {
+        return d.init.apply(this, [null, r])
+      } else if (!r) {
+        return n.error("jQuery Waypoints needs a callback function or handler option.")
+      } else {
+        return n.error("The " + r + " method does not exist in jQuery Waypoints.")
+      }
+    };
+    n.fn[g].defaults = {
+      context: r,
+      continuous: true,
+      enabled: true,
+      horizontal: false,
+      offset: 0,
+      triggerOnce: false
+    };
+    h = {
+      refresh: function() {
+        return n.each(c, function(t, e) {
+          return e.refresh()
+        })
+      },
+      viewportHeight: function() {
+        var t;
+        return (t = r.innerHeight) != null ? t : i.height()
+      },
+      aggregate: function(t) {
+        var e, r, i;
+        e = s;
+        if (t) {
+          e = (i = c[n(t)[0][u]]) != null ? i.waypoints : void 0
+        }
+        if (!e) {
+          return []
+        }
+        r = {
+          horizontal: [],
+          vertical: []
+        };
+        n.each(r, function(t, i) {
+          n.each(e[t], function(t, e) {
+            return i.push(e)
+          });
+          i.sort(function(t, e) {
+            return t.offset - e.offset
+          });
+          r[t] = n.map(i, function(t) {
+            return t.element
+          });
+          return r[t] = n.unique(r[t])
+        });
+        return r
+      },
+      above: function(t) {
+        if (t == null) {
+          t = r
+        }
+        return h._filter(t, "vertical", function(t, e) {
+          return e.offset <= t.oldScroll.y
+        })
+      },
+      below: function(t) {
+        if (t == null) {
+          t = r
+        }
+        return h._filter(t, "vertical", function(t, e) {
+          return e.offset > t.oldScroll.y
+        })
+      },
+      left: function(t) {
+        if (t == null) {
+          t = r
+        }
+        return h._filter(t, "horizontal", function(t, e) {
+          return e.offset <= t.oldScroll.x
+        })
+      },
+      right: function(t) {
+        if (t == null) {
+          t = r
+        }
+        return h._filter(t, "horizontal", function(t, e) {
+          return e.offset > t.oldScroll.x
+        })
+      },
+      enable: function() {
+        return h._invoke("enable")
+      },
+      disable: function() {
+        return h._invoke("disable")
+      },
+      destroy: function() {
+        return h._invoke("destroy")
+      },
+      extendFn: function(t, e) {
+        return d[t] = e
+      },
+      _invoke: function(t) {
+        var e;
+        e = n.extend({}, s.vertical, s.horizontal);
+        return n.each(e, function(e, n) {
+          n[t]();
+          return true
+        })
+      },
+      _filter: function(t, e, r) {
+        var i, o;
+        i = c[n(t)[0][u]];
+        if (!i) {
+          return []
+        }
+        o = [];
+        n.each(i.waypoints[e], function(t, e) {
+          if (r(i, e)) {
+            return o.push(e)
+          }
+        });
+        o.sort(function(t, e) {
+          return t.offset - e.offset
+        });
+        return n.map(o, function(t) {
+          return t.element
+        })
+      }
+    };
+    n[m] = function() {
+      var t, n;
+      n = arguments[0], t = 2 <= arguments.length ? e.call(arguments, 1) : [];
+      if (h[n]) {
+        return h[n].apply(null, t)
+      } else {
+        return h.aggregate.call(null, n)
+      }
+    };
+    n[m].settings = {
+      resizeThrottle: 100,
+      scrollThrottle: 30
+    };
+    return i.load(function() {
+      return n[m]("refresh")
+    })
+  })
+}).call(this);
+;/*
  * Konami-JS ~
  * :: Now with support for touch events and multiple instances for
  * :: those situations that call for multiple easter eggs!
@@ -2762,42 +3179,6 @@ $(document).ready(function($) {
 
 	randomDeadPixel();
 
-	// window.addEventListener('resize', function () {
-	// 	$('article section').each(function () {
-	// 		this.style.height = window.innerHeight + 'px';
-	// 	});
-	// }, true);
-
-/*	function animate(time) {
-		requestAnimationFrame( animate );
-		if (canvas) {
-			ctx = canvas.getContext('2d');
-			ctx.fillStyle = '#DADADA';
-			ctx.clearRect(0,0, 50, 3);
-			ctx.rect(0,0, 50, 3);
-			ctx.fill();
-		}
-	}
-
-	animate();*/
-
-	// function activeSectionHandler (section) {
-	// 	canvas  = $('canvas', section)[0];
-
-	// 	if (canvas){
-	// 		if ($(canvas).hasClass('pixelLine')) {
-
-	// 			canvas.style.width = window.innerWidth + 'px';
-	// 			canvas.style.maxHeight = canvas.height + 'px';
-
-
-	// 		}
-	// 	}
-	// }
-
-	// window.addEventListener('scroll', function () {
-
-	// }, false);
 
 	//
 	// Imageglitch
@@ -2820,11 +3201,6 @@ $(document).ready(function($) {
 	   return event.keyCode;
 	}
 
-	// customImageGlitch(1000, $(".img-glitch-source"), $(".img-glitch-target"));
-
-	// $('article section').each(function () {
-	// 	this.style.height = window.innerHeight + 'px';
-	// });
 	var lastText;
 
 	$( "#inputForm" ).on( "keydown", function( event ) {
@@ -2907,14 +3283,31 @@ $(document).ready(function($) {
 		return false;
 	});
 
+    // Mobile Background Change
+    $('#section1').waypoint(function() {
+        console.log("section1");
+        $('body').toggleClass('mobi-bg1')
+    });
+    $('#section2').waypoint(function() {
+        console.log("section2");
+        $('body').toggleClass('mobi-bg2')
+    });
+    $('#section3').waypoint(function() {
+        console.log("section3");
+        $('body').toggleClass('mobi-bg3')
+    });
+    $('#section4').waypoint(function() {
+        console.log("section4");
+        $('body').toggleClass('mobi-bg4')
+    });
 
-	// Konami Code 
+
+	// Konami Code
 	var easter_egg = new Konami();
 	easter_egg.code = function() {
 		window.location.href = "well-well-what-do-we-have-here.html";
 	}
 	easter_egg.load();
-
 
 	// page related arg tips
 	if( $('body').hasClass('main') ){
