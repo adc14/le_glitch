@@ -19,11 +19,11 @@ article {
     box-sizing: border-box;
     width: $full;
     height: $full;
-    padding: 0;
+    padding: 0 1em;
     @include breakpoint(baby-bear) {
         padding: 0;
     }
-    
+
 }
 
 article section{
