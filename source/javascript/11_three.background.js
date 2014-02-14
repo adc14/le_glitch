@@ -59,6 +59,9 @@
 		HALFHEIGTH = HEIGHT / 2,
 		VIEW_ANGLE = 60,
 	    ASPECT = WIDTH / HEIGHT,
+		SCENELAMPS = [],
+		SHARKS = [],
+		SHARKS_DISTANCE = 15,
 	    animationRequestID = undefined,
 		container = null,
 		mouseX = 0,
@@ -81,12 +84,11 @@
 		segments = 12,
 		flatShadingExceptions = ['Floor']
 		rotationExceptions = ['Floor', 'Glitch'],
-		SCENELAMPS = [],
-		SHARKS = [],
 		pulsar = null,
 		pulsarRadius = 0.5,
 		particleSystem = null,
 		scrollPosition = 0,
+		lastScrollPosition = 0,
 		segmentHeight = window.innerHeight,
 		inViewSectionNumber = 0,
 		scrollMarks = {
@@ -99,11 +101,11 @@
 				triggerd : false
 			},
 			third : {
-				mark : segmentHeight * 3,
+				mark : segmentHeight * 4,
 				triggerd : false
 			}
 		},
-		rotSpeed = 0.0008;
+		rotSpeed = 0.0018;
 
 
 	var mouse = new THREE.Vector2(),
@@ -113,8 +115,6 @@
 
 	var pickingData = [], pickingTexture, pickingScene;
 	var objects = [], highlightBox;
-
-	var clock = new THREE.Clock();
 
 	var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 
@@ -264,18 +264,18 @@
 		if ( scrollPosition && scrollPosition >= scrollMarks.first.mark && scrollPosition <= scrollMarks.second.mark) {
 			inViewSectionNumber = 1;
 		}
-		if ( scrollPosition && scrollPosition >= scrollMarks.second.mark && scrollPosition <= scrollMarks.third.mark) {
+		if ( scrollPosition && scrollPosition >= scrollMarks.third.mark) {
 			inViewSectionNumber = 2;
 		}
 
 		if (inViewSectionNumber == 0 && !scrollMarks.first.triggerd) {
-			rotSpeed = 0.0008;
+			rotSpeed = 0.0018;
 			loadFirstBlenderScene('scene/scene1.js');
 			scrollMarks.first.triggerd = true;
 			scrollMarks.second.triggerd = false;
 			scrollMarks.third.triggerd = false;
 		} else if (inViewSectionNumber == 1 && !scrollMarks.second.triggerd) {
-			rotSpeed = 0.0014;
+			rotSpeed = 0.0020;
 			loadSecondBlenderScene('scene/scene2.js');
 			scrollMarks.first.triggerd = false;
 			scrollMarks.second.triggerd = true;
@@ -288,6 +288,78 @@
 			scrollMarks.third.triggerd = true;
 		}
 
+		if (inViewSectionNumber == 2 && scrollMarks.third.triggerd) {
+
+			for (var i = 0; i < SHARKS.length; i++) {
+				var pX = SHARKS[i].position.x,
+					pY = SHARKS[i].position.y,
+					pZ = SHARKS[i].position.z;
+
+				if (SHARKS[i].startPos) {
+
+					
+					if (scrollPosition > lastScrollPosition) {	// down direction
+
+						if ( Math.abs(pX) < SHARKS[i].endPosABS.x &&
+							 Math.abs(pY) < SHARKS[i].endPosABS.y &&
+							 Math.abs(pZ) < SHARKS[i].endPosABS.z ) {
+
+							new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[i] } )
+								.to( { 
+										x : pX + pX * SHARKS[i].velocity,
+										y : pY + pY * SHARKS[i].velocity,
+										z : pZ + pZ * SHARKS[i].velocity
+									 }, 300 )
+								.easing( TWEEN.Easing.Quadratic.InOut )
+								.onUpdate(function() {
+									this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
+								}).start();
+
+						}
+
+
+					} else { 									// up direction
+
+
+						new TWEEN.Tween( {
+								x : pX,
+								y : pY,
+								z : pZ,
+								shark : SHARKS[i],
+								start : SHARKS[i].startPos,
+								abs : SHARKS[i].startPosABS
+							} )
+							.to( { 
+									x : pX - pX * SHARKS[i].velocity,
+									y : pY - pY * SHARKS[i].velocity,
+									z : pZ - pZ * SHARKS[i].velocity
+								 }, 300 )
+							.easing( TWEEN.Easing.Quadratic.InOut )
+							.onUpdate(function() {
+
+								if ( Math.abs(this.x) < this.abs.x &&
+									 Math.abs(this.y) < this.abs.y &&
+									 Math.abs(this.z) < this.abs.z) {
+									this.x = this.start.x;
+									this.y = this.start.y;
+									this.z = this.start.z;
+								}
+
+								this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
+									
+							}).start();
+
+
+					}
+
+				}
+
+			}
+
+			//console.log(particleSystem);
+		}
+
+		lastScrollPosition = scrollPosition;
 	}
 
 	/**
@@ -597,6 +669,42 @@
 
 		SCENELAMPS = findObjectsByNames(['Lamp']);
 		SHARKS = findObjectsByNames(['Icosphere_cell']);
+
+		// Calculate positions for animation
+		for (var i = 0; i < SHARKS.length; i++) {
+			var pX = SHARKS[i].position.x,
+				pY = SHARKS[i].position.y,
+				pZ = SHARKS[i].position.z;
+
+			SHARKS[i].startPos = {
+				x : pX,
+				y : pY,
+				z : pZ
+			};
+
+			SHARKS[i].startPosABS = {
+				x : Math.abs(pX),
+				y : Math.abs(pY),
+				z : Math.abs(pZ)
+			};
+
+			SHARKS[i].endPos = {
+				x : pX * SHARKS_DISTANCE,
+				y : pY * SHARKS_DISTANCE,
+				z : pZ * SHARKS_DISTANCE
+			};
+
+			SHARKS[i].endPosABS = {
+				x : Math.abs(pX * SHARKS_DISTANCE),
+				y : Math.abs(pY * SHARKS_DISTANCE),
+				z : Math.abs(pZ * SHARKS_DISTANCE)
+			};
+
+			SHARKS[i].velocity = Math.random();
+		}
+
+
+
 		addPulsar();
 		
 
@@ -679,36 +787,10 @@
 			
 				var pX = SHARKS[p].position.x,
 					pY = SHARKS[p].position.y,
-					pZ = SHARKS[p].position.z,
-				    particle = new THREE.Vector3(pX, pY, pZ);
+					pZ = SHARKS[p].position.z;
 
-/*			    var pX = Math.random() * 20 - 1 - Math.random() * 20,
-			    	pY = Math.random() * 20 - 1 - Math.random() * 20,
-			    	pZ = Math.random() * 20 - 1 - Math.random() * 20;*/
-			        
-				var particle = new THREE.Vector3(pX, pY, pZ);
 
 				particleSystem.add(SHARKS[p]);
-
-				new TWEEN.Tween( { x : pX, y : pY, z : pZ, shark : SHARKS[p] } )
-				.to( { 
-						x : pX * 10,
-						y : pY * 10,
-						z : pZ * 10
-					 }, 10000 )
-				.easing( TWEEN.Easing.Quadratic.InOut )
-				.onUpdate(function() {
-					this.shark.position = new THREE.Vector3(this.x, this.y, this.z);
-				}).start();
-
-				// create a velocity vector
-				particle.velocity = new THREE.Vector3(
-					0,				// x
-					-Math.random(),	// y
-					0);				// z
-
-				// add it to the geometry
-				particles.vertices.push(particle);
 
 			}
 
@@ -736,7 +818,7 @@
 		}
 
 		if (particleSystem)
-			particleSystem.rotation.y += 0.0008;
+			particleSystem.rotation.y += 0.0016;
 
 		glitchCounter = (glitchCounter + 1) % (250 + glitchRepeats);
 
