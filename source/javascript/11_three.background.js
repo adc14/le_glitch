@@ -356,7 +356,6 @@
 
 			}
 
-			//console.log(particleSystem);
 		}
 
 		lastScrollPosition = scrollPosition;
