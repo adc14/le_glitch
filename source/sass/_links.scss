@@ -1,11 +1,11 @@
 a {
 	background: transparent;
 	color: $link-color;
-	text-decoration: none;
+	text-decoration: underline;	
 	outline: 0;
 	
 	&:hover, &:focus {
-		text-decoration: underline;
+	text-decoration: none;
 	}
 	&:focus {
 		outline: thin dotted;

@@ -16,6 +16,7 @@
         screen and (                min-resolution: 2dppx) {
     #threeBackground{
         display: none;
+        position: absolute;
         > canvas{
             display: none;
         }
@@ -25,10 +26,9 @@
     }
     body{
         -webkit-hyphens: auto;
-          -moz-hyphens: auto;
-          -ms-hyphens: auto;
-          hyphens: auto;
-        background-size: cover;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
+        hyphens: auto;
         background-color: black;
         background-image: url('../img/state1.jpg');
         background-repeat: no-repeat;

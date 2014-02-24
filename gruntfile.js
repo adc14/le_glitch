@@ -55,18 +55,6 @@ module.exports = function(grunt){
             }
         },
 
-        cssc: {
-            build: {
-                options: {
-                    consolidateViaDeclarations: true,
-                    consolidateViaSelectors:    true,
-                    consolidateMediaQueries:    true
-                },
-                src: CSS_BUILD,
-                dest: CSS_BUILD
-            }
-        },
-
         cssmin: {
             build: {
                 src: CSS_BUILD,
@@ -277,7 +265,7 @@ module.exports = function(grunt){
     grunt.registerTask('default',   []);
     grunt.registerTask('server',   ['build','connect:livereload','watch']);
     grunt.registerTask('build',   ['buildjs', 'buildhtml', 'buildcss', 'buildassets']);
-    grunt.registerTask('buildcss',  ['sass', 'cssc', 'cssmin']);
+    grunt.registerTask('buildcss',  ['sass', 'cssmin']);
     // grunt.registerTask('buildjs',  ['jshint', 'concat', 'uglify']);
     grunt.registerTask('buildjs',  ['concat', 'uglify']);
     grunt.registerTask('buildhtml',  ['htmlhint', 'htmlbuild']);

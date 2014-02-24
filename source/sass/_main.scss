@@ -22,15 +22,15 @@ article {
     padding: 0 1em;
     @include breakpoint(baby-bear) {
         padding: 0;
+        max-width: $full;
     }
+    @include breakpoint(mama-bear) {
+        max-width: 50em;
+    }    
 
 }
 
-article section{
-	width: $full;
-}
-
-article section > * {
+article {
     @include breakpoint(baby-bear) {
         width: $half;
         margin: 0 auto;
@@ -38,30 +38,13 @@ article section > * {
     }
 }
 
-article section > ul,
-article section > p,
-article section > section {
-}
-
-section {
-	margin: 0 auto;
-}
-
 .sponsoren {
     text-align: center;
-    margin-bottom: 20em;
+    margin-bottom: 10em;
 }
 
 img{
 	max-width: $full;
-}
-
-.logo {
-    width: $full;
-    @include breakpoint(baby-bear) {
-        width: $half;
-        margin: 0 8%;
-    }
 }
 
 // Correct `block` display not defined in IE 8/9.
@@ -89,8 +72,19 @@ video {
 
 footer {
     position: relative;
-    background: #1c1c1c;
-    padding: 15px;
+    padding: 0 0 1em 0;
+}
+
+footer aside {
+       @include breakpoint(baby-bear) {
+        width: $full;
+    }     
+        @include breakpoint(mama-bear) {
+        width: 33.333333%;
+    }
+    float: left;
+    box-sizing: border-box;
+    padding: 10px;
 }
 
 .fullscreen {
