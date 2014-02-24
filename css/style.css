@@ -407,24 +407,7 @@ footer aside {
       display: none; }
 
   h2.glitch {
-    font-size: 2em; }
-
-  body {
-    -webkit-hyphens: auto;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    hyphens: auto;
-    background-color: black;
-    background-image: url("../img/state1.jpg");
-    background-repeat: no-repeat; }
-    body.mobi-bg2 {
-      background-image: url("../img/state2.jpg"); }
-    body.mobi-bg3 {
-      background-image: url("../img/state3.jpg"); }
-    body.mobi-bg4 {
-      background-image: url("../img/state5.jpg"); }
-    body.mobi-bg5 {
-      background-image: url("../img/state6.jpg"); } }
+    font-size: 2em; } }
 #deadPixel {
   width: 1px;
   height: 1px;
