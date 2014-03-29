@@ -9,29 +9,25 @@
         <meta property="og:site_name" content="Agile Design Camp 2014">
         <meta property="og:locale" content="de_DE">
         <meta property="og:url" content="">
-        <meta property="og:image" content="http://die-katrin.eu/wp-content/uploads/adc_logo_blog1.png">
+        <meta property="og:image" content="http://agiledesigncamp.org/img/adc-thumb-rectangle.jpg">
         <meta property="og:title" content="Agile Design Camp 2014">
-        <meta property="og:description" content="Some superduper dudes talkin' bout super cool stuff. nobody understands.">
+        <meta property="og:description" content="Some superduper dudes talkin' bout super cool stuff nobody understands.">
         <link href="http://fonts.googleapis.com/css?family=Roboto:400,100,300" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="css/style.css">
-
     </head>
-    <body class="l33t" itemscope itemtype="http://schema.org/Event">
+    <body class="main" itemscope itemtype="http://schema.org/Event">
+        <div id="threeBackground"></div>
         <blink>
+            <div class="preloaderContainer">
+                <canvas id="preloader"></canvas>
+            </div>
             <span id="deadPixel">is it me you're looking for?</span>
             <article>
                 <section class="home fullscreen">
-                    <div class="img-glitch-source">
-                        <img itemprop="image" class="logo" src="/img/adc_bremen_V2_final_3b.gif" alt="ADC">
-                    </div>
+                        <img itemprop="image" class="logo" src="/img/adc_bremen.png" alt="ADC">
                 </section>
-                <section>
-                    <h2>Testimonials</h2>
-                    
-                    <div class='embed-container'><iframe src='http://www.youtube.com/embed/IaqhJwoCxf4' frameborder='0' allowfullscreen></iframe></div>
-                </section>
-                <section class="fullscreen">
-                    <h2>tl;dr</h2>
+                <section id="section1" class="fullscreen">
+                    <h2 class="glitch" data-text="tl;dr">tl;dr</h2>
                     <ul>
                         <li itemprop="name">agile design camp</li>
                         <li itemprop="location">Weser Tower</li>
@@ -45,25 +41,41 @@
                         Das Agile Design Camp geht 2014 in seine dritte Iteration. Vormals noch in Hamburg, findet es dieses Mal über den Dächern Bremens im Weser Tower statt. 5 Sessionräume mit Platz für ca. 100 Personen laden zum Zusammenkommen ein.
                     </p>
                 </section>
-                <section class="fullscreen">
-                    <h2>Design, Build, Play, Test, Repeat.</h2>
+                <section id="section2" class="fullscreen">
+                    <h2 class="glitch " data-text="Design, Build, Play, Test, Repeat.">Design, Build, Play, Test, Repeat.</h2>
                     <p>
                         Designprozesse, Werkzeuge, sogar Berufsfelder ändern sich mit der Zeit, mit neuen Anforderungen. Im derzeit stattfindenden digitalen Wandel unserer Welt haben sich neue Methoden und Prozesse entwickelt, etablierte Vorgehensweisen wurden ersetzt oder nachhaltig beeinflusst. Nach dem Paradigmenwechsel von „statischen Entwicklungsprozessen“ hin zu agilen Entwicklungsmethoden wurden Ideen aus der agilen Softwareentwicklung auch in anderen Bereichen zu relevanten Themen. Das Agile Design Camp stellt für einen Tag eine Bühne für den Themenkomplex um Design, Entwicklung und Methodik der Gegenwart.
                     </p>
                 </section>
-                <section class="fullscreen">
-                    <h2>Was ist ein Barcamp?</h2>
+                <section id="section3" class="fullscreen">
+                    <h2 class="glitch" data-text="Was ist ein Barcamp?">Was ist ein Barcamp?</h2>
                     <p>
                         Ein Barcamp ist eine offene Konferenz (oder eigentlich Un-Konferenz). Die angebotenen Vorträge und Workshops werden durch die Teilnehmenden bestimmt.
                         Die Sessions werden bei einem Barcamp im Vorfeld und am jeweiligen Morgen des Eventtages durch alle Teilnehmenden vorgeschlagen und zeitlich eingeplant. Das bedeutet, dass alle die Chance bekommen, über ein Thema zu reden.
                         Alle Teilnehmenden werden ermutigt, Sessions anzubieten bzw. diese durch eigene Erfahrungen zu unterstützen. Darüber hinaus sollen alle ihre Kenntnisse und Gedanken auch im Netz, über Twitter etc. mitteilen.
                     </p>
+                    <h2 class="glitch" data-text="Sessions">Sessions</h2>
                     <p>
-                        Bringt euch ein! Bereitet Sessions vor, schleppt euer Labor mit, fragt, bietet, macht...
+                        Bringt euch ein! Bereitet Sessions vor, schleppt euer Labor mit, fragt, bietet, macht...<br>
+                        Für die Sessionplanung im Vorfeld: <a class="glitch" data-text="http://www.reddit.com/r/adc14" href="http://www.reddit.com/r/adc14" title="http://www.reddit.com/r/adc14">http://www.reddit.com/r/adc14</a>.
                     </p>
                 </section>
-
-                <section>
+                <div id="section4" class="fullscreen">
+                    <section>
+                        <h2 class="glitch" data-text="Tickets">Tickets</h2>
+                        <p itemprop="offers">
+                            Kostenlose aber Verbindliche Reservierungen über <a class="glitch" data-text="tickets bei amiando" href="http://de.amiando.com/NGIQMZY.html" title="tickets bei amiando">amiando</a>
+                        </p>
+                    </section>
+                    <section>
+                        <h2 class="glitch" data-text="Kinderbetreuung">Kinderbetreuung</h2>
+                        <p>
+                            Es wird die Möglichkeit zur Kinderbetreuung vor Ort geben.<br>
+                            Bitte meldet euch bei Bedarf bis zum 14.03.2014 <a class="glitch" data-text="per Mail" href="mailto:marius.bruns@gmail.com">per Mail</a>.
+                        </p>
+                    </section>
+                </div>
+                <section class="sponsoren">
                     <div>
                         <h2 class="glitch" data-text="Sponsoren">Unsere Sponsoren:</h2>
                         <h3>Platin</h3>
@@ -80,55 +92,94 @@
                         <a href="/pdf/adc-quer-sponsoren.pdf">PDF LINK</a>
                     </div>
                 </section>
-                <section>
-                    <div>
-                        <h2>Location</h2>
-                        <iframe src="https://mapsengine.google.com/map/u/0/embed?mid=zrg3uyab9SVA.kVhHw4pmgjE8" width="100%" height="480"></iframe>
-                    </div>
-                </section>
             <footer>
                 <form id="inputForm">
                     <section class="output">
                         <aside>
                             <h3>Team</h3>
-                            <p>Das Barcamp wird von folgenden Personen irgendwie organisiert, unterstützt oder sonstwie durchgeführt: Kerstin Seidel, Marius Bruns, Andreas Dantz</p>
+                            <p>Das Barcamp wird von folgenden Personen organisiert und unterstützt: Kerstin Seidel, Marius Bruns, Andreas Dantz</p>
                         </aside>
                         <aside>
                             <h3>Kontakt</h3>
                             <p>
-                                <a href="" title="">twitter</a>
-                                <a href="" title="">facebook</a>
-                                <a href="" title="">email</a>
+                                <a class="glitch" data-text="twitter" href="https://twitter.com/agiledesigncamp" title="https://twitter.com/agiledesigncamp">twitter</a>
+                                <a class="glitch" data-text="facebook" href="https://www.facebook.com/agiledesigncamp" title="https://www.facebook.com/agiledesigncamp">facebook</a>
+                                <a class="glitch" data-text="email" href="mailto:marius.bruns@gmail.com" title="">email</a>
                             </p>
                         </aside>
                         <aside>
                             <h3>Impressum</h3>
-                            <p>Marius Bruns
-                            c/o hmmh multimediahaus AG
-                            Am Weser Terminal 1
+                            <p>Marius Bruns<br>
+                            c/o hmmh AG<br>
+                            Am Weser Terminal 1<br>
                             28217 Bremen</p>
-                        </aside>
-                        <aside>
-                            <h3>Webseite</h3>
-                            <p>Die Webseite wurde vom Team Interface Engineering der hmmh AG irgendwann zwischendurch fallengelassen.</p>
                         </aside>
                     </section>
                     <div class="special-link-for-sandra-bullock">
                         <input type="text" name="inputField">
-                        <!-- <a href="super-secret-easter-egg.html" title="Dont click!">&pi;</a> -->
+                        <a href="super-secret-easter-egg.html" title="Dont click!">&pi;</a>
                     </div>
                 </form>
-                <ul class="great-badges">
-                    <li><img src="img/ns_logo.gif" alt="the better browser"></li>
-                    <li><img src="img/ie_logo.gif" alt="the betterer browser"></li>
-                    <li><img src="img/noframes.gif" alt="frames are so 1998"></li>
-                    <li><img src="img/notepad.gif" alt="the best editor, nooob"></li>
-                </ul>
             </footer>
-            <h2> <a href="index2.html">zurück zur "richtigen Seite".</> </h2>
             </article>
         </blink>
-<!--         // <script type="text/javascript" src="javascript/main.js"></script> -->
 
+        <!--[if !(lte IE 8)]><!-->
+        <script type="text/javascript" src="javascript/main.js"></script>
+
+
+        <script type="x-shader/x-vertex" id="vertexshader">
+
+            // switch on high precision floats
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+
+            uniform float amplitude;
+            attribute float displacement;
+            varying vec3 vNormal;
+
+            void main()
+            {
+                vNormal = normal;
+
+                // push the displacement into the three
+                // slots of a 3D vector so it can be
+                // used in operations with other 3D
+                // vectors like positions and normals
+                vec3 newPosition = position + normal * vec3(displacement * amplitude);
+
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition,1.0);
+            }
+
+        </script>
+
+        <script type="x-shader/x-fragment" id="fragmentshader">
+
+            #ifdef GL_ES
+            precision highp float;
+            #endif
+
+            uniform float amplitude;
+            varying vec3 vNormal;
+
+            void main()
+            {
+
+                //// calc the dot product and clamp
+                vec3 light = vec3(0.5,0.2,1.0);
+
+                // ensure it's normalized
+                light = normalize(light);
+
+                // calculate the dot product of
+                // the light to the vertex normal
+                float dProd = max(0.0, dot(vNormal, light));
+
+                gl_FragColor = vec4(0.12,0.12,0.12,0.2);
+            }
+
+        </script>
+        <!--<![endif]-->
     </body>
 </html>
